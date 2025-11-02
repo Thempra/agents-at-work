@@ -1,8 +1,9 @@
+# app/crud.py
 from sqlalchemy.orm import Session
 from typing import Optional
 
 # Assuming the Task model is defined in models.py
-from app.models import Task, Call  # Import other relevant models as needed
+from app.models import Task  # Import other relevant models as needed
 from fastapi import HTTPException, status
 
 def get_task(db: Session, task_id: str):
