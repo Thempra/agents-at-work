@@ -2,55 +2,47 @@
   "project_name": "Call for Tenders",
   "main_features": [
     {
+      "name": "Adminer Integration",
+      "description": "Integrated Adminer tool for managing the PostgreSQL database of Call for Tenders.",
+      "priority": "High"
+    },
+    {
       "name": "Web Scraping Engine",
-      "description": "Automatically scrapes indices of calls from the EU website, extracts detailed data and PDF links, and updates the database."
+      "description": "Scrapes EU funding opportunities using Scrapy, extracting data and handling pagination.",
+      "priority": "Very High"
     },
     {
-      "name": "Database Management",
-      "description": "Manages a PostgreSQL database using SQLAlchemy ORM for storing call data with various attributes like funding details, deadlines, etc."
-    },
-    {
-      "name": "Adminer Access",
-      "description": "Provides access to an Adminer instance through Docker, allowing users to manage the PostgreSQL database directly from a web interface."
-    },
-    {
-      "name": "API Endpoints",
-      "description": "Exposes RESTful API endpoints using FastAPI for retrieving and managing call data, including CRUD operations."
-    },
-    {
-      "name": "Dashboard UI",
-      "description": "Displays real-time system status, scraping statistics, and a paginated list of calls with detailed information and interactive features."
+      "name": "Dashboard Implementation",
+      "description": "Provides a dashboard for monitoring system status, scraping statistics, and convocation results.",
+      "priority": "High"
     }
   ],
   "technical_stack": [
     {
-      "language": "Python",
-      "frameworks": [
-        "FastAPI (for API)",
-        "Scrapy (for web scraping)"
-      ]
+      "name": "Framework",
+      "technology": "FastAPI"
     },
     {
-      "database": "PostgreSQL"
+      "name": "Database",
+      "technology": "PostgreSQL"
     },
     {
-      "ORM": "SQLAlchemy"
+      "name": "Web Scraping",
+      "technology": "Scrapy"
     },
     {
-      "dockerization": "Docker Compose for services"
+      "name": "Frontend Framework",
+      "technology": "React.js" // Assuming React is used for the dashboard
     }
   ],
   "priority_order": [
-    "Database Management",
-    "Web Scraping Engine",
-    "API Endpoints",
-    "Dashboard UI",
-    "Adminer Access"
+    "Very High: Web Scraping Engine (app/scrapers/)",
+    "High: Adminer Integration (docs/AdminER_GUIDE.md)",
+    "High: Dashboard Implementation (docs/DASHBOARD_GUIDE.md)"
   ],
-  "corrective_actions": [
-    {
-      "issue": "NameError: name 'declarative_base' is not defined",
-      "solution": "Ensure that the `Base = declarative_base()` import statement is included in the file where it's referenced."
-    }
-  ]
+  "corrective_actions": {
+    "error_message": "Validation Error",
+    "description": "The error indicates that the 'router' object is not found in 'app/routers/tasks.py'. This could be due to a missing import statement or an incorrect filename.",
+    "solution": "Verify that the file name and path are correct. Ensure that the 'tasks_router' is properly defined and exported from 'app/routers/tasks.py'. If it's named differently, update the import statement accordingly."
+  }
 }
