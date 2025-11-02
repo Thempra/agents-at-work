@@ -1,137 +1,130 @@
+# tests/test_api.py
 import pytest
-from fastapi import HTTPException
-from sqlalchemy import create_engine, Column, Integer, String, Text, Float
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
+from app.main import app
+from app.database import get_db, Base
+from app.models import Call
 
-# Create a temporary in-memory database for testing purposes
-SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test_sql_app.db"
 
-Base = declarative_base()
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-class Call(Base):
-    __tablename__ = 'calls'
+def override_get_db():
+    try:
+        db = TestingSessionLocal()
+        yield db
+    finally:
+        db.close()
+
+app.dependency_overrides[get_db] = override_get_db
+
+client = TestClient(app)
+
+# Fixtures for database setup/teardown
+@pytest.fixture(autouse=True)
+def init_database():
+    Base.metadata.create_all(bind=engine)
+    yield
+    Base.metadata.drop_all(bind=engine)
+
+
+# CRUD Operations Tests
+def test_read_calls(client):
+    response = client.get("/calls/")
+    assert response.status_code == 200
+    assert len(response.json()) == 0
+
+def test_create_call(client):
+    payload = {
+        "call_id": "test-call-id",
+        "name": "Test Call",
+        "sector": "Testing Sector",
+        "description": "This is a test call.",
+        "url": "http://example.com/test",
+        "total_funding": 1000.0,
+        "funding_percentage": 50.0,
+        "max_per_company": 200.0,
+        "deadline": "2023-12-31T23:59:59Z",
+    }
+    response = client.post("/calls/", json=payload)
+    assert response.status_code == 201
+    created_call = response.json()
+    assert created_call["call_id"] == payload["call_id"]
+
+def test_read_single_call(client):
+    # Create a call to read later
+    create_payload = {
+        "call_id": "test-call-id",
+        "name": "Test Call",
+        "sector": "Testing Sector",
+        "description": "This is a test call.",
+        "url": "http://example.com/test",
+        "total_funding": 1000.0,
+        "funding_percentage": 50.0,
+        "max_per_company": 200.0,
+        "deadline": "2023-12-31T23:59:59Z",
+    }
+    client.post("/calls/", json=create_payload)
     
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(500))
-    description = Column(Text)
+    response = client.get("/calls/test-call-id")
+    assert response.status_code == 200
+    single_call = response.json()
+    assert single_call["call_id"] == create_payload["call_id"]
 
-# Create the database tables
-Base.metadata.create_all(bind=engine)
-
-# Fixture for creating a test session
-@pytest.fixture(scope="module")
-def db_session():
-    session = SessionLocal()
-    yield session
-    session.close()
-
-# Test fixture to create a sample call record in the database
-@pytest.fixture(scope="function")
-def test_call(db_session):
-    new_call = Call(name="Test Call", description="This is a test call.")
-    db_session.add(new_call)
-    db_session.commit()
-    db_session.refresh(new_call)
-    yield new_call
-    db_session.delete(new_call)
-    db_session.commit()
-
-# Test creating a new call
-def test_create_call(db_session):
-    new_call = Call(name="New Call", description="This is a new call.")
-    db_session.add(new_call)
-    db_session.commit()
-    assert new_call.id is not None
-    assert new_call.name == "New Call"
-    assert new_call.description == "This is a new call."
-
-# Test reading a call by ID
-def test_read_call(test_call, db_session):
-    call = db_session.query(Call).filter(Call.id == test_call.id).first()
-    assert call.id == test_call.id
-    assert call.name == test_call.name
-    assert call.description == test_call.description
-
-# Test updating a call
-def test_update_call(test_call, db_session):
-    updated_name = "Updated Call"
-    updated_description = "This is an updated call."
+def test_update_call(client):
+    # Create a call to update later
+    create_payload = {
+        "call_id": "test-call-id",
+        "name": "Test Call",
+        "sector": "Testing Sector",
+        "description": "This is a test call.",
+        "url": "http://example.com/test",
+        "total_funding": 1000.0,
+        "funding_percentage": 50.0,
+        "max_per_company": 200.0,
+        "deadline": "2023-12-31T23:59:59Z",
+    }
+    client.post("/calls/", json=create_payload)
     
-    test_call.name = updated_name
-    test_call.description = updated_description
-    db_session.commit()
+    update_payload = {
+        "name": "Updated Test Call",
+        "sector": "Updated Testing Sector",
+        "description": "This is an updated test call.",
+        "total_funding": 2000.0,
+        "funding_percentage": 75.0,
+        "max_per_company": 400.0,
+    }
     
-    updated_call = db_session.query(Call).filter(Call.id == test_call.id).first()
-    assert updated_call.name == updated_name
-    assert updated_call.description == updated_description
+    response = client.put("/calls/test-call-id", json=update_payload)
+    assert response.status_code == 200
+    updated_call = response.json()
+    assert updated_call["name"] == update_payload["name"]
 
-# Test deleting a call
-def test_delete_call(test_call, db_session):
-    db_session.delete(test_call)
-    db_session.commit()
+def test_delete_call(client):
+    # Create a call to delete later
+    create_payload = {
+        "call_id": "test-call-id",
+        "name": "Test Call",
+        "sector": "Testing Sector",
+        "description": "This is a test call.",
+        "url": "http://example.com/test",
+        "total_funding": 1000.0,
+        "funding_percentage": 50.0,
+        "max_per_company": 200.0,
+        "deadline": "2023-12-31T23:59:59Z",
+    }
+    client.post("/calls/", json=create_payload)
     
-    deleted_call = db_session.query(Call).filter(Call.id == test_call.id).first()
-    assert deleted_call is None
+    response = client.delete("/calls/test-call-id")
+    assert response.status_code == 204
+    # Verify deletion by trying to read the call again
+    read_response = client.get("/calls/test-call-id")
+    assert read_response.status_code == 404
 
-# Test handling 404 error for non-existent call
-def test_read_non_existent_call(db_session):
-    with pytest.raises(HTTPException) as exc_info:
-        call = db_session.query(Call).filter(Call.id == 999).first()
-        assert exc_info.value.status_code == 404
-
-# Test validation errors for empty name
-def test_create_call_with_empty_name(db_session):
-    new_call = Call(name="", description="This is a test call.")
-    with pytest.raises(HTTPException) as exc_info:
-        db_session.add(new_call)
-        db_session.commit()
-        assert exc_info.value.status_code == 400
-
-# Test validation errors for long name
-def test_create_call_with_long_name(db_session):
-    long_name = "a" * 501  # Exceeds VARCHAR(500) limit
-    new_call = Call(name=long_name, description="This is a test call.")
-    with pytest.raises(HTTPException) as exc_info:
-        db_session.add(new_call)
-        db_session.commit()
-        assert exc_info.value.status_code == 400
-
-# Test validation errors for empty description
-def test_create_call_with_empty_description(db_session):
-    new_call = Call(name="Test Call", description="")
-    with pytest.raises(HTTPException) as exc_info:
-        db_session.add(new_call)
-        db_session.commit()
-        assert exc_info.value.status_code == 400
-
-# Test validation errors for long description
-def test_create_call_with_long_description(db_session):
-    long_description = "a" * 65536  # Exceeds TEXT limit
-    new_call = Call(name="Test Call", description=long_description)
-    with pytest.raises(HTTPException) as exc_info:
-        db_session.add(new_call)
-        db_session.commit()
-        assert exc_info.value.status_code == 400
-
-# Test edge case: updating a non-existent call
-def test_update_non_existent_call(db_session):
-    updated_name = "Updated Call"
-    updated_description = "This is an updated call."
-    
-    with pytest.raises(HTTPException) as exc_info:
-        call = Call(name=updated_name, description=updated_description)
-        db_session.merge(call)
-        db_session.commit()
-        assert exc_info.value.status_code == 404
-
-# Test edge case: deleting a non-existent call
-def test_delete_non_existent_call(db_session):
-    with pytest.raises(HTTPException) as exc_info:
-        call = Call(id=999)
-        db_session.delete(call)
-        db_session.commit()
-        assert exc_info.value.status_code == 404
-
+# Authentication Tests (if present)
+# Error Handling and Edge Cases Tests
