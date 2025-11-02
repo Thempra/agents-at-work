@@ -8,37 +8,32 @@ from app.routers.tasks import router as tasks_router
 
 app = FastAPI(
     title="Call for Tenders API",
-    description="FastAPI application to manage call for tenders data.",
+    description="API para monitoreo y análisis de convocatorias de la UE",
     version="1.0.0",
-    openapi_url="/openapi.json",
-    docs_url="/docs",
-    redoc_url="/redoc"
 )
 
-# CORS Configuration
+origins = ["*"]  # Permisiva para desarrollo, modificar según sea necesario
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Database Initialization
-Base.metadata.create_all(bind=engine)
-
 @app.on_event("startup")
 async def startup():
-    # Perform any necessary database setup or migrations here
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 @app.on_event("shutdown")
 async def shutdown():
-    # Clean up resources if needed
+    pass
 
-# Include router for tasks
-app.include_router(tasks_router, prefix="/tasks", tags=["Tasks"])
+app.include_router(tasks_router, prefix="/tasks")
 
-# Health Check Endpoint
-@app.get("/health", status_code=status.HTTP_200_OK)
-async def health_check():
-    return {"status": "healthy"}
+@app.get("/")
+async def read_root():
+    return {"message": "Bienvenido a la API de Call for Tenders"}
+
