@@ -2,47 +2,50 @@
   "project_name": "Call for Tenders",
   "main_features": [
     {
-      "name": "Adminer Integration",
-      "description": "Integrated Adminer tool for managing the PostgreSQL database of Call for Tenders.",
-      "priority": "High"
+      "feature": "Web Scraping Engine",
+      "description": "Scrapes convocatorias de la UE, validates URLs, extracts data and manages pagination."
     },
     {
-      "name": "Web Scraping Engine",
-      "description": "Scrapes EU funding opportunities using Scrapy, extracting data and handling pagination.",
-      "priority": "Very High"
+      "feature": "Database Management",
+      "description": "Manages PostgreSQL database for storing call details and related data."
     },
     {
-      "name": "Dashboard Implementation",
-      "description": "Provides a dashboard for monitoring system status, scraping statistics, and convocation results.",
-      "priority": "High"
+      "feature": "API Endpoints",
+      "description": "Provides RESTful API for accessing convocatoria data through JWT authentication."
+    },
+    {
+      "feature": "Dashboard",
+      "description": "Monitors system status, displays statistics, shows results with pagination, and includes features like notifications."
     }
   ],
   "technical_stack": [
     {
-      "name": "Framework",
-      "technology": "FastAPI"
+      "technology": "Scrapy",
+      "description": "Framework for web scraping"
     },
     {
-      "name": "Database",
-      "technology": "PostgreSQL"
+      "technology": "FastAPI",
+      "description": "Framework for building API endpoints"
     },
     {
-      "name": "Web Scraping",
-      "technology": "Scrapy"
+      "technology": "SQLAlchemy",
+      "description": "ORM and database toolkit"
     },
     {
-      "name": "Frontend Framework",
-      "technology": "React.js" // Assuming React is used for the dashboard
+      "technology": "PostgreSQL",
+      "description": "Database management system"
     }
   ],
   "priority_order": [
-    "Very High: Web Scraping Engine (app/scrapers/)",
-    "High: Adminer Integration (docs/AdminER_GUIDE.md)",
-    "High: Dashboard Implementation (docs/DASHBOARD_GUIDE.md)"
+    "Web Scraping Engine",
+    "API Endpoints",
+    "Dashboard",
+    "Database Management"
   ],
-  "corrective_actions": {
-    "error_message": "Validation Error",
-    "description": "The error indicates that the 'router' object is not found in 'app/routers/tasks.py'. This could be due to a missing import statement or an incorrect filename.",
-    "solution": "Verify that the file name and path are correct. Ensure that the 'tasks_router' is properly defined and exported from 'app/routers/tasks.py'. If it's named differently, update the import statement accordingly."
-  }
+  "corrective_actions": [
+    {
+      "issue": "NameError: name 'declarative_base' is not defined",
+      "solution": "Ensure that the import statement for declarative_base from SQLAlchemy is included at the top of the app/crud.py file."
+    }
+  ]
 }
