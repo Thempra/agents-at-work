@@ -30,7 +30,7 @@ def update_task(db: Session, task_id: int, task: TaskUpdate):
     
     for field, value in task.dict(exclude_unset=True).items():
         setattr(db_task, field, value)
-    
+
     db.commit()
     db.refresh(db_task)
     return db_task
