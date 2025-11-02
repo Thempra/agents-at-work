@@ -1,49 +1,55 @@
+# app/routers/tasks.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.database import get_db
+from app.schemas import CallCreate, CallUpdate
+from app.crud import create_call, update_call, get_calls, get_call
+
 router = APIRouter()
 
-@router.get("/tasks", status_code=status.HTTP_200_OK)
-async def get_tasks(db: Session = Depends(get_db)):
-    try:
-        tasks = db.query(Task).all()
-        return {"tasks": tasks}
-    except SQLAlchemyError as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+@router.post("/calls/", response_model=CallCreate, status_code=status.HTTP_201_CREATED)
+async def create_new_task(call: CallCreate, db: Session = Depends(get_db)):
+    """
+    Create a new call.
+    """
+    return create_call(db=db, call=call)
 
-@router.post("/tasks", status_code=status.HTTP_201_CREATED)
-async def create_task(task_data: TaskCreate, db: Session = Depends(get_db)):
-    try:
-        task = Task(**task_data.dict())
-        db.add(task)
-        db.commit()
-        db.refresh(task)
-        return {"task": task}
-    except SQLAlchemyError as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+@router.get("/calls/{call_id}", response_model=CallCreate, status_code=status.HTTP_200_OK)
+async def read_task(call_id: str, db: Session = Depends(get_db)):
+    """
+    Get a single call by its ID.
+    """
+    db_call = get_call(db=db, call_id=call_id)
+    if db_call is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Call not found")
+    return db_call
 
-@router.put("/tasks/{task_id}", status_code=status.HTTP_200_OK)
-async def update_task(task_id: str, task_data: TaskUpdate, db: Session = Depends(get_db)):
-    try:
-        task = db.query(Task).filter_by(id=task_id).first()
-        if not task:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
-        for key, value in task_data.dict().items():
-            setattr(task, key, value)
-        db.commit()
-        db.refresh(task)
-        return {"task": task}
-    except SQLAlchemyError as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+@router.get("/calls/", response_model=list[CallCreate], status_code=status.HTTP_200_OK)
+async def read_calls(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    Get a list of calls.
+    """
+    calls = get_calls(db=db, skip=skip, limit=limit)
+    return calls
 
-@router.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_task(task_id: str, db: Session = Depends(get_db)):
-    try:
-        task = db.query(Task).filter_by(id=task_id).first()
-        if not task:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
-        db.delete(task)
-        db.commit()
-        return {"detail": "Task deleted"}
-    except SQLAlchemyError as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+@router.put("/calls/{call_id}", response_model=CallUpdate, status_code=status.HTTP_200_OK)
+async def update_task(call_id: str, call: CallUpdate, db: Session = Depends(get_db)):
+    """
+    Update an existing call.
+    """
+    db_call = get_call(db=db, call_id=call_id)
+    if db_call is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Call not found")
+    return update_call(db=db, db_task=db_call, call=call)
+
+@router.delete("/calls/{call_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_task(call_id: str, db: Session = Depends(get_db)):
+    """
+    Delete an existing call.
+    """
+    db_call = get_call(db=db, call_id=call_id)
+    if db_call is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Call not found")
+    db.delete(db_call)
+    db.commit()
