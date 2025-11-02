@@ -1,112 +1,114 @@
-# Style Guide for the Task Management Application
+# Style Guide for the Task Management App
 
 ## Overview
-This document outlines the UI/UX style guide for the Task Management application. It includes guidelines on color scheme, typography, and component styles to ensure a cohesive and user-friendly interface.
+
+This style guide provides a comprehensive set of guidelines to ensure consistency and quality in the user interface (UI) and user experience (UX) of the task management app. The guidelines are designed to improve usability, readability, and overall aesthetic appeal.
 
 ## Color Scheme
-The color scheme will be minimalistic yet professional, using a neutral palette with accents to highlight key elements.
 
-### Primary Colors
-- **#3498db** (Cobalt Blue): Used for primary actions and links.
-- **#2ecc71** (Emerald Green): Used for positive or successful actions.
-- **#e74c3c** (Alizarin Crimson): Used for negative or error actions.
+### Palette
+- **Primary Blue**: #007BFF - Used for primary actions, navigation, and accents.
+- **Secondary Gray**: #6C757D - Used for background elements, dividers, and less important text.
+- **Success Green**: #28A745 - Used to indicate successful actions or positive outcomes.
+- **Error Red**: #DC3545 - Used to indicate errors or negative outcomes.
 
-### Secondary Colors
-- **#ecf0f1** (Cloud Grey): Used as the background color to create contrast and balance.
-- **#bdc3c7** (Silver Chalice): Used for borders, dividers, and accents.
+### Usage
+- **Primary Blue**: Emphasize primary actions such as "Create Task," "Delete Task," and navigation links.
+- **Secondary Gray**: Use for background colors, dividers, and less important text elements to maintain a clean layout.
+- **Success Green**: Highlight successful actions like marking a task as completed.
+- **Error Red**: Indicate errors or negative outcomes, such as failed task creation.
 
 ## Typography
-The typography will be clean and readable, with a focus on simplicity and clarity. The font stack will use sans-serif fonts for headings and body text.
 
-### Headings
-- **Font:** Montserrat, Sans-Serif
-- **Sizes:**
-  - H1: 2.5em
-  - H2: 2em
-  - H3: 1.75em
+### Fonts
+- **Primary Font**: Open Sans - A versatile sans-serif font that is easy to read on screens and in print.
+- **Secondary Font**: Roboto - Used for headings and titles to add a touch of modernity and professionalism.
 
-### Body Text
-- **Font:** Roboto, Sans-Serif
-- **Size:** 1em
-- **Line Height:** 1.6
+### Sizes
+- **Heading 1 (H1)**: 2.5rem, Roboto Bold
+- **Heading 2 (H2)**: 2rem, Open Sans SemiBold
+- **Heading 3 (H3)**: 1.75rem, Open Sans SemiBold
+- **Body Text**: 1.25rem, Open Sans Regular
+
+### Usage
+- **Heading 1**: Use for the main title of the app or large sections.
+- **Heading 2 and Heading 3**: Use for section headers and subheadings.
+- **Body Text**: Use for all regular text content, including descriptions and labels.
 
 ## Component Styles
 
 ### Buttons
-Buttons should be large and easily clickable.
 
-- **Primary Button:**
-  - Background: #3498db
-  - Text Color: White
-  - Hover State: #2980b9
-  - Border Radius: 5px
-  - Padding: 10px 20px
+#### Primary Button
+- **Background Color**: Primary Blue (#007BFF)
+- **Text Color**: White
+- **Border**: None
+- **Hover State**: Lighter shade of primary blue (#0056b3)
 
-- **Secondary Button:**
-  - Background: #ecf0f1
-  - Text Color: #3498db
-  - Hover State: #bdc3c7
-  - Border Radius: 5px
-  - Padding: 10px 20px
+#### Secondary Button
+- **Background Color**: Transparent
+- **Text Color**: Primary Blue (#007BFF)
+- **Border**: 1px solid Primary Blue
+- **Hover State**: Darker shade of primary blue (#004085)
 
-### Inputs
-Inputs should be clearly labeled and easy to interact with.
+### Input Fields
 
-- **Default Input:**
-  - Background: White
-  - Text Color: #2ecc71
-  - Border: 1px solid #ecf0f1
-  - Border Radius: 5px
-  - Padding: 10px
+#### Text Input
+- **Background Color**: White
+- **Border**: 1px solid Secondary Gray (#6C757D)
+- **Text Color**: Black
+- **Placeholder Color**: Secondary Gray (#6C757D)
 
-### Forms
-Forms should be organized and have clear instructions.
-
-- **Form Label:**
-  - Font: Roboto, Sans-Serif
-  - Size: 1em
-  - Color: #3498db
-
-- **Form Error Message:**
-  - Font: Roboto, Sans-Serif
-  - Size: 0.9em
-  - Color: #e74c3c
+#### Submit Button
+- **Background Color**: Primary Blue (#007BFF)
+- **Text Color**: White
+- **Border**: None
+- **Hover State**: Lighter shade of primary blue (#0056b3)
 
 ### Cards
-Cards should be used to group related information and actions.
 
-- **Card Background:**
-  - White with a slight shadow for depth
-
-- **Card Title:**
-  - Font: Montserrat, Sans-Serif
-  - Size: 1.25em
-  - Color: #3498db
+#### Task Card
+- **Background Color**: White
+- **Border**: 1px solid Secondary Gray (#6C757D)
+- **Padding**: 1rem
+- **Radius**: 8px
 
 ### Navigation
-Navigation should be intuitive and accessible.
 
-- **Menu Item:**
-  - Font: Roboto, Sans-Serif
-  - Size: 1em
-  - Color: #2ecc71
+#### Sidebar
+- **Background Color**: Primary Blue (#007BFF)
+- **Text Color**: White
+- **Hover State**: Lighter shade of primary blue (#0056b3)
 
-- **Active Menu Item:**
-  - Background: #ecf0f1
-  - Text Color: #3498db
+## Layout
 
-## Responsive Design
-The application should be designed to be responsive, ensuring a seamless experience on various devices.
+### General Guidelines
+- **Grid System**: Use a grid system for consistent spacing and alignment.
+- **Responsive Design**: Ensure the app is responsive and adapts to different screen sizes.
+- **Consistent Spacing**: Use consistent padding, margin, and spacing between elements.
 
-- **Mobile:** Optimized for small screens with a mobile-first approach.
-- **Tablet:** Adjustments made for larger screens while maintaining usability.
-- **Desktop:** Full-featured layout with larger font sizes and spacing.
+## Navigation
 
-## Accessibility
-The application should follow accessibility guidelines to ensure inclusivity.
+### Sidebar
+- The sidebar should be fixed on the left side of the screen.
+- It should contain links to major sections of the app such as "Tasks," "Settings," and "Profile."
+- The active link should have a different background color or text color to indicate the current section.
 
-- **Contrast Ratio:** Ensure sufficient contrast between text and background colors.
-- **Keyboard Navigation:** All features should be accessible via keyboard.
-- **Screen Reader Compatibility:** Proper use of ARIA attributes for screen readers.
+### Header
+- The header should be located at the top of the screen.
+- It should contain the app name, user profile picture, and navigation links.
+- Use a dark mode for better visibility on light backgrounds.
 
-By following this style guide, the Task Management application will provide a clean, intuitive, and user-friendly experience.
+## Forms
+
+### Task Form
+- The task form should include fields for task name, description, status, and due date.
+- Use labels above each field for clarity.
+- Provide validation feedback to help users complete the form correctly.
+
+## Error Handling
+
+### Error Messages
+- Display error messages prominently at the top of the screen or in a modal dialog.
+- Use the error red color (#DC3545) for error messages.
+- Provide actionable steps to
