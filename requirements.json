@@ -2,30 +2,42 @@
   "project_name": "Call for Tenders",
   "main_features": [
     {
-      "name": "Web Scraping Engine",
-      "description": "Scrapes the index of EU funding tenders, extracts PDF links, and validates URLs."
+      "feature": "Web Scraping Engine",
+      "description": "Automated scraping of EU funding opportunities, including detailed data extraction and PDF validation."
     },
     {
-      "name": "Dashboard",
-      "description": "Monitors system status, provides scraping statistics, displays tender results with pagination, and offers automatic updates."
+      "feature": "Adminer Database Management",
+      "description": "Access to a lightweight admin tool for managing the PostgreSQL database directly from the browser."
+    },
+    {
+      "feature": "FastAPI API",
+      "description": "RESTful API for monitoring and analyzing tenders, with automatic Swagger UI and ReDoc documentation."
+    },
+    {
+      "feature": "Dashboard Monitoring",
+      "description": "Real-time monitoring dashboard with statistics, notifications, and detailed analysis of tender data."
     }
   ],
   "technical_stack": [
-    "FastAPI for the API",
-    "Scrapy for web scraping",
-    "SQLAlchemy ORM for database management",
-    "PostgreSQL as the database",
-    "Docker for containerization"
+    "FastAPI",
+    "Scrapy (without Selenium)",
+    "PostgreSQL",
+    "Adminer",
+    "aiohttp",
+    "BeautifulSoup",
+    "JWT Authentication",
+    "Docker Compose"
   ],
   "priority_order": [
-    "Implement web scraping engine to gather tender data",
-    "Develop API endpoints to expose scraped data",
-    "Create a user-friendly dashboard for monitoring and displaying results"
+    "Web Scraping Engine",
+    "Dashboard Monitoring",
+    "FastAPI API",
+    "Adminer Database Management"
   ],
-  "corrective_actions": {
-    "validation_error": {
-      "description": "Error in models.py due to the use of 'func' which is not defined.",
-      "solution": "Import 'func' from sqlalchemy import func at the beginning of models.py."
+  "corrective_actions": [
+    {
+      "error": "Validation Error: ImportError: cannot import name 'CallCreate' from 'app.schemas'",
+      "action": "Ensure that the `CallCreate` and `CallUpdate` classes are correctly defined in the `app/schemas.py` file. Check for typos or missing imports."
     }
-  }
+  ]
 }
