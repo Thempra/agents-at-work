@@ -1,6 +1,7 @@
 # app/crud.py
-from sqlalchemy.orm import Session
 
+from sqlalchemy.orm import Session
+from typing import Optional
 from app.models import Call
 from app.schemas import CallCreate, CallUpdate
 
@@ -12,7 +13,7 @@ def get_calls(db: Session, skip: int = 0, limit: int = 100):
 
 def create_call(db: Session, call: CallCreate):
     fake_hashed_password = call.url + "notreallyhashed"
-    db_task = Call(
+    db_call = Call(
         call_id=call.call_id,
         name=call.name,
         sector=call.sector,
@@ -26,26 +27,29 @@ def create_call(db: Session, call: CallCreate):
         analysis_status="pending",
         relevance_score=0.0
     )
-    db.add(db_task)
-    db.commit()
-    db.refresh(db_task)
-    return db_task
-
-def update_call(db: Session, call_id: str, call: CallUpdate):
-    db_call = get_call(db=db, call_id=call_id)
-    if not db_call:
-        raise HTTPException(status_code=404, detail="Call not found")
-    update_data = call.dict(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(db_call, key, value)
+    db.add(db_call)
     db.commit()
     db.refresh(db_call)
     return db_call
 
-def delete_call(db: Session, call_id: str):
-    db_call = get_call(db=db, call_id=call_id)
-    if not db_call:
+def update_call(db: Session, call_id: str, call_update: CallUpdate):
+    call = get_call(db, call_id)
+    if not call:
         raise HTTPException(status_code=404, detail="Call not found")
-    db.delete(db_call)
+    
+    update_data = call_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(call, key, value)
+    
     db.commit()
-    return {"ok": True}
+    db.refresh(call)
+    return call
+
+def delete_call(db: Session, call_id: str):
+    call = get_call(db, call_id)
+    if not call:
+        raise HTTPException(status_code=404, detail="Call not found")
+    
+    db.delete(call)
+    db.commit()
+    return call
