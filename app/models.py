@@ -1,21 +1,21 @@
-from sqlalchemy import Column, Integer, String, Text, Float, TIMESTAMP, ForeignKey, UUID
+# app/models.py
+
+from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, UUID, TIMESTAMP, func
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from datetime import datetime
-import uuid
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
 class Call(Base):
     __tablename__ = 'calls'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+
+    id = Column(UUID(as_uuid=True), primary_key=True, server_default=func.uuid_generate_v4())
     call_id = Column(String(255), unique=True, index=True)
     name = Column(String(500))
     sector = Column(String(200))
     description = Column(Text)
-    url = Column(String(1000), unique=True, index=True)
+    url = Column(String(1000))
     total_funding = Column(Float)
     funding_percentage = Column(Float)
     max_per_company = Column(Float)
@@ -23,21 +23,20 @@ class Call(Base):
     processing_status = Column(String(50))
     analysis_status = Column(String(50))
     relevance_score = Column(Float)
-    created_at = Column(TIMESTAMP, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP, onupdate=datetime.utcnow)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, onupdate=func.now())
 
-# Assuming there's another model 'User' for the relationship
-class User(Base):
-    __tablename__ = 'users'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    username = Column(String(100), unique=True, index=True)
-    password_hash = Column(String(256))
-    calls = relationship('Call', secondary='user_calls')
+class Task(Base):
+    __tablename__ = 'tasks'
 
-# Assuming there's a junction table for many-to-many relationship between User and Call
-class UserCall(Base):
-    __tablename__ = 'user_calls'
-    
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), primary_key=True)
-    call_id = Column(UUID(as_uuid=True), ForeignKey('calls.id'), primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(255), nullable=False)
+    description = Column(Text)
+    completed = Column(Boolean, default=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, onupdate=func.now())
+
+# Define relationships if needed
+# Example:
+# Call.tasks = relationship("Task", back_populates="call")
+
