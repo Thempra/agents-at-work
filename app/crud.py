@@ -1,19 +1,32 @@
-from sqlalchemy import Column, Integer, String, Float, Text, UUID, TIMESTAMP, Boolean
-from sqlalchemy.dialects.postgresql import JSONB
-from uuid import uuid4
-from datetime import datetime
+from sqlalchemy.orm import Session
+from app.models import Task
+from uuid import UUID
+from typing import List, Optional
 
-Base = declarative_base()
+def get_task(db: Session, task_id: UUID):
+    return db.query(Task).filter(Task.id == task_id).first()
 
-class Task(Base):
-    __tablename__ = "tasks"
+def get_tasks(db: Session, skip: int = 0, limit: int = 100) -> List[Task]:
+    return db.query(Task).offset(skip).limit(limit).all()
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    task_id = Column(String(255), unique=True, nullable=False)
-    name = Column(String(500), nullable=False)
-    description = Column(Text, nullable=True)
-    status = Column(String(50), nullable=False)
-    created_at = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP(timezone=True), onupdate=datetime.utcnow)
+def create_task(db: Session, task: Task):
+    db.add(task)
+    db.commit()
+    db.refresh(task)
+    return task
 
-# Other models can be defined here
+def update_task(db: Session, task_id: UUID, task_data):
+    task = get_task(db, task_id)
+    if task:
+        for key, value in task_data.items():
+            setattr(task, key, value)
+        db.commit()
+        db.refresh(task)
+    return task
+
+def delete_task(db: Session, task_id: UUID):
+    task = get_task(db, task_id)
+    if task:
+        db.delete(task)
+        db.commit()
+    return task
