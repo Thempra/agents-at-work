@@ -1,35 +1,19 @@
-from sqlalchemy.orm import Session
-from app.models import Task
-from app.schemas import TaskCreate, TaskUpdate
+from sqlalchemy import Column, Integer, String, Float, Text, UUID, TIMESTAMP, Boolean
+from sqlalchemy.dialects.postgresql import JSONB
+from uuid import uuid4
+from datetime import datetime
 
-def get_task(db: Session, task_id: int):
-    return db.query(Task).filter(Task.id == task_id).first()
+Base = declarative_base()
 
-def get_tasks(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Task).offset(skip).limit(limit).all()
+class Task(Base):
+    __tablename__ = "tasks"
 
-def create_task(db: Session, task: TaskCreate):
-    db_task = Task(**task.dict())
-    db.add(db_task)
-    db.commit()
-    db.refresh(db_task)
-    return db_task
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    task_id = Column(String(255), unique=True, nullable=False)
+    name = Column(String(500), nullable=False)
+    description = Column(Text, nullable=True)
+    status = Column(String(50), nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
+    updated_at = Column(TIMESTAMP(timezone=True), onupdate=datetime.utcnow)
 
-def update_task(db: Session, task_id: int, task_update: TaskUpdate):
-    db_task = get_task(db, task_id)
-    if not db_task:
-        raise HTTPException(status_code=404, detail="Task not found")
-    
-    for field, value in task_update.dict(exclude_unset=True).items():
-        setattr(db_task, field, value)
-    db.commit()
-    db.refresh(db_task)
-    return db_task
-
-def delete_task(db: Session, task_id: int):
-    db_task = get_task(db, task_id)
-    if not db_task:
-        raise HTTPException(status_code=404, detail="Task not found")
-    
-    db.delete(db_task)
-    db.commit()
+# Other models can be defined here
