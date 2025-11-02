@@ -1,27 +1,21 @@
-Dockerfile
 # Use an official Python runtime as a parent image
-FROM python:3.10-slim
+FROM python:3.9-slim
 
-# Set environment variables to make the container run without prompts
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Create a non-root user and switch to it
-RUN useradd -m appuser
-USER appuser
-
-# Working directory inside the container
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy project files into the container at /app
-COPY . .
+# Copy the current directory contents into the container at /app
+COPY . /app
 
-# Install dependencies
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port 8000 for FastAPI
+# Create a non-root user and switch to it
+RUN useradd --create-home appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Expose the port the app runs on
 EXPOSE 8000
 
-# Command to run the app using Gunicorn with multiple workers
-CMD ["gunicorn", "-w", "4", "-b", ":8000", "app.main:app"]
+# Run the app when the container launches
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
