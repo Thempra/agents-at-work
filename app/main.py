@@ -5,81 +5,48 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from app.database import engine, Base, get_db
 from app.routers import tasks
-from app.schemas import CallCreate, CallUpdate
+from app.schemas import CallCre
 
 app = FastAPI(
     title="Call for Tenders API",
-    description="API para el monitoreo y análisis de convocatorias de la Unión Europea",
+    description="API for managing tenders and convocatorias from the European Union.",
     version="1.0.0",
 )
 
-# Configure CORS (permissive for development)
+# CORS Configuration (permissive for development)
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Initialize the database and create tables
-Base.metadata.create_all(bind=engine)
-
 # Include routers
-app.include_router(tasks.router)
+app.include_router(tasks.router, prefix="/api")
 
-# Health check endpoint
-@app.get("/health", tags=["Health"])
-def health():
-    return {"status": "healthy"}
-
-# Startup/shutdown events for database
 @app.on_event("startup")
-async def startup_db():
+async def startup_event():
+    # Create database tables on startup
+    Base.metadata.create_all(bind=engine)
+
+@app.get("/")
+def read_root(request: Request):
+    return {"message": "Welcome to the Call for Tenders API", "url": request.url}
+
+@app.get("/healthcheck", tags=["System"])
+def health_check(db: Session = Depends(get_db)):
     try:
-        db = SessionLocal()
-        # Perform any initialization or migration logic here
-        db.close()
+        # Check if we can connect to the database
+        db.execute("SELECT 1")
+        return {"status": "healthy"}
     except SQLAlchemyError as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=503, detail="Database is not healthy")
 
 @app.on_event("shutdown")
-async def shutdown_db():
-    db = SessionLocal(bind=engine)
-    db.close()
+async def shutdown_event():
+    # Perform any cleanup tasks here if needed
+    pass
 
-# Example endpoint for creating a new call
-@app.post("/calls/", response_model=CallCreate, tags=["Calls"])
-def create_call(call: CallCreate, db: Session = Depends(get_db)):
-    fake_hashed_password = call.url + "notreallyhashed"
-    db_call = Call(
-        call_id=call.call_id,
-        name=call.name,
-        sector=call.sector,
-        description=call.description,
-        url=call.url,
-        total_funding=call.total_funding,
-        funding_percentage=call.funding_percentage,
-        max_per_company=call.max_per_company,
-        deadline=call.deadline,
-        processing_status="pending",
-        analysis_status="pending",
-    )
-    db.add(db_call)
-    db.commit()
-    db.refresh(db_call)
-    return db_call
-
-# Example endpoint for retrieving a single call
-@app.get("/calls/{call_id}", response_model=CallCreate, tags=["Calls"])
-def read_call(call_id: str, db: Session = Depends(get_db)):
-    db_call = get_call(db=db, call_id=call_id)
-    if db_call is None:
-        raise HTTPException(status_code=404, detail="Call not found")
-    return db_call
-
-# Example endpoint for retrieving all calls
-@app.get("/calls/", response_model=list[CallCreate], tags=["Calls"])
-def read_calls(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    db_calls = get_calls(db=db, skip=skip, limit=limit)
-    return db_calls
+# Include other routers and dependencies as needed
