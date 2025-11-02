@@ -1,16 +1,16 @@
 version: '3.8'
 
 services:
-  api:
+  web:
     build: .
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
-    depends_on:
-      - db
     environment:
       - DATABASE_URL=sqlite:///./sql_app.db
+    volumes:
+      - ./app:/app
+    depends_on:
+      - db
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 10s
@@ -20,16 +20,21 @@ services:
   db:
     image: postgres:13
     environment:
-      - POSTGRES_DB=fastapi
-      - POSTGRES_USER=fastapiuser
-      - POSTGRES_PASSWORD=fastapipassword
+      - POSTGRES_DB=sql_app
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=example
     volumes:
-      - db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: bitnami/redis:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./data/redis:/bitnami/redis
 
 volumes:
-  db_data:
+  data_db:
+  data_redis:
