@@ -3,52 +3,49 @@
   "main_features": [
     {
       "name": "Web Scraping Engine",
-      "description": "Scrapes convocatorias from the EU website, validates URLs and links, handles pagination, extracts basic data, and scrapes detailed pages for PDFs."
-    },
-    {
-      "name": "Database Management",
-      "description": "Manages a PostgreSQL database with tables like 'calls' to store convocatoria details."
-    },
-    {
-      "name": "API Endpoints",
-      "description": "Provides an API for accessing and managing convocatoria data, including endpoints for creating, updating, and retrieving tasks."
+      "description": "Automatically scrapes convocatoria data from the EU's website and updates the database with new records."
     },
     {
       "name": "Dashboard",
-      "description": "Monitors system status, provides statistics on scraping, displays analysis results, and offers direct links to recommended tenders."
+      "description": "Provides real-time monitoring of the system, statistics on scraping activities, and detailed results for tenders."
     }
   ],
   "technical_stack": [
-    "FastAPI for API development",
-    "SQLAlchemy with PostgreSQL for database management",
-    "Scrapy for web scraping",
-    "aiohttp for asynchronous downloads",
-    "BeautifulSoup for HTML parsing",
-    "Docker for containerization"
+    {
+      "name": "Framework",
+      "value": "FastAPI"
+    },
+    {
+      "name": "Database",
+      "value": "PostgreSQL"
+    },
+    {
+      "name": "Scraping Library",
+      "value": "Scrapy"
+    },
+    {
+      "name": "Asynchronous I/O",
+      "value": "aiohttp"
+    },
+    {
+      "name": "HTML Parsing",
+      "value": "BeautifulSoup"
+    },
+    {
+      "name": "Authentication",
+      "value": "JWT (pending implementation)"
+    }
   ],
   "priority_order": [
-    {
-      "feature": "Web Scraping Engine",
-      "reason": "Foundation for data collection and is critical for the project's success."
-    },
-    {
-      "feature": "Database Management",
-      "reason": "Necessary to store and manage the scraped data efficiently."
-    },
-    {
-      "feature": "API Endpoints",
-      "reason": "Enables interaction with the system programmatically, essential for automated processes and integrations."
-    },
-    {
-      "feature": "Dashboard",
-      "reason": "Provides a user-friendly interface for monitoring and accessing the system's data."
-    }
+    "Web Scraping Engine",
+    "Dashboard",
+    "API Endpoints",
+    "Error Handling"
   ],
   "corrective_actions": [
     {
-      "issue": "Validation Error in main.py",
-      "description": "Error occurred when trying to import routes from 'app.routers.tasks'. This is likely due to an issue with the task schema or model.",
-      "action": "Check the TaskCreate and TaskUpdate schemas in app/schemas.py for any validation errors. Ensure that the fields match those defined in the database models (app/models.py)."
+      "description": "Correct the validation error in `app/main.py` by ensuring that all required dependencies are correctly imported and used.",
+      "status": "Pending"
     }
   ]
 }
