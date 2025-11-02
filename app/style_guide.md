@@ -1,90 +1,129 @@
-# UI/UX Guidelines for the Call Management System
+# Style Guide for the Application
 
-## Overview
-The Call Management System aims to provide a streamlined platform for managing calls and their associated data. This document outlines the UI/UX guidelines to ensure a cohesive, intuitive, and accessible user experience.
+This document outlines the UI/UX guidelines to be followed throughout the development of our application. These guidelines will ensure consistency across all components and features of the application, enhancing user experience and usability.
 
 ## Color Scheme
-### Primary Colors
-- **Blue (#007BFF)**: Represents trust, professionalism, and action.
-  - Usage: Branding, primary buttons, links.
-- **Green (#28A745)**: Indicates success and positive actions.
-  - Usage: Successful operations, completed tasks.
-- **Red (#DC3545)**: Signals errors and warnings.
-  - Usage: Error messages, critical alerts.
 
-### Secondary Colors
-- **Gray (#6C757D)**: Provides contrast without being too bold.
-  - Usage: Backgrounds, dividers, text on light backgrounds.
-- **Light Blue (#ADD8E6)**: Subtle branding and secondary actions.
-  - Usage: Hover states, secondary buttons.
+The primary color palette for the application is as follows:
+
+1. **Primary Blue**: `#007BFF` - This color will be used to denote actions, buttons, and important links.
+2. **Secondary Gray**: `#6C757D` - This color will be used for labels, text, and inactive components.
+3. **Accent Green**: `#28A745` - This color will be used to indicate success or positive actions.
+4. **Error Red**: `#DC3545` - This color will be used to highlight errors or negative actions.
+
+These colors should be applied consistently across the application, ensuring a cohesive and intuitive user interface.
 
 ## Typography
-### Font Family
-- **Primary Font**: Open Sans
-  - Style: Sans-serif, used for all body text.
-- **Heading Font**: Roboto
-  - Style: Sans-serif, used for headings and titles.
+
+The application will use a sans-serif font for all text elements to ensure readability and modernity. The following fonts are recommended:
+
+1. **Primary Font**: `Roboto` - This is a Google Fonts open-source font that provides a wide range of styles and weights.
+2. **Heading Font**: `Roboto Slab` - This font will be used for headings and titles to provide a strong visual hierarchy.
 
 ### Font Sizes
-- **Small (12px)**: Used for fine print, labels, and small captions.
-- **Medium (14px)**: Default font size for paragraphs and medium-sized text.
-- **Large (18px)**: Used for subheadings and titles.
-- **Huge (24px)**: For main headings and title tags.
+
+- **Headings**:
+  - H1: 36px
+  - H2: 28px
+  - H3: 24px
+  - H4: 20px
+  - H5: 18px
+  - H6: 16px
+
+- **Body Text**:
+  - Regular: 16px
+  - Small: 14px
 
 ### Line Height
-- **Single Line**: 1.5em (24px)
-- **Double Line**: 1.75em (36px)
+
+- **Headings**: 1.2 (1.2 * font size)
+- **Body Text**: 1.5 (1.5 * font size)
 
 ## Component Styles
 
 ### Buttons
-#### Primary Button
-- Background Color: Blue (#007BFF)
-- Text Color: White (#FFFFFF)
-- Border: None
-- Font Size: Medium (14px)
-- Padding: 8px 16px
-- Rounded Corners: 4px
 
-#### Secondary Button
-- Background Color: Light Blue (#ADD8E6)
-- Text Color: Dark Gray (#333333)
-- Border: None
-- Font Size: Medium (14px)
-- Padding: 8px 16px
-- Rounded Corners: 4px
+Buttons should be used to trigger actions or navigate through the application. They come in different styles and sizes.
 
-#### Hover State
-- Primary Button: Dark Blue (#0056b3)
-- Secondary Button: Lighter Gray (#e9ecef)
+#### Button Variants
 
-### Input Fields
-- Background Color: White (#FFFFFF)
-- Text Color: Dark Gray (#333333)
-- Border: 1px solid Light Gray (#CCCCCC)
-- Font Size: Medium (14px)
-- Padding: 8px
-- Rounded Corners: 4px
+1. **Primary Button**:
+   - Background Color: `#007BFF`
+   - Text Color: `#FFFFFF`
+   - Hover State:
+     - Background Color: `#0056b3`
+     - Text Color: `#FFFFFF`
 
-#### Focus State
-- Input Fields: Light Blue (#ADD8E6) border
+2. **Secondary Button**:
+   - Background Color: `#6C757D`
+   - Text Color: `#FFFFFF`
+   - Hover State:
+     - Background Color: `#5a6268`
+     - Text Color: `#FFFFFF`
 
-### Text Links
-- Color: Blue (#007BFF)
-- Text Decoration: None
-- Font Size: Medium (14px)
+3. **Accent Button**:
+   - Background Color: `#28A745`
+   - Text Color: `#FFFFFF`
+   - Hover State:
+     - Background Color: `#218838`
+     - Text Color: `#FFFFFF`
 
-#### Hover State
-- Links: Dark Blue (#0056b3)
+#### Button Sizes
 
-### Error Messages
-- Color: Red (#DC3545)
-- Font Size: Small (12px)
+- **Small**: 30px
+- **Medium**: 40px (Default)
+- **Large**: 50px
 
-## Accessibility
-- Ensure all interactive elements are keyboard accessible.
-- Use sufficient color contrast for readability.
-- Provide captions and transcripts for multimedia content.
-- Allow users to adjust font sizes.
+### Forms
 
-This style guide aims to create a user-friendly environment that enhances the overall experience of using the Call Management System.
+Forms should be designed to be intuitive and easy to use. All form elements, including inputs, labels, and buttons, should follow the color scheme and typography guidelines.
+
+#### Input Fields
+
+- **Border Color**: `#6C757D`
+- **Focus Border Color**: `#007BFF`
+- **Placeholder Text Color**: `#999`
+
+#### Labels
+
+- **Text Color**: `#6C757D`
+
+### Tables
+
+Tables should be used to display data in a structured format. All table elements, including headers and cells, should follow the color scheme and typography guidelines.
+
+#### Table Headers
+
+- **Background Color**: `#f8f9fa`
+- **Text Color**: `#343a40`
+
+#### Table Cells
+
+- **Background Color**: `#FFFFFF`
+- **Text Color**: `#343a40`
+
+### Alerts
+
+Alerts should be used to communicate important information to the user. They come in different styles and sizes.
+
+#### Alert Variants
+
+1. **Success**:
+   - Background Color: `#28A745`
+   - Text Color: `#FFFFFF`
+
+2. **Error**:
+   - Background Color: `#DC3545`
+   - Text Color: `#FFFFFF`
+
+3. **Warning**:
+   - Background Color: `#ffc107`
+   - Text Color: `#212529`
+
+#### Alert Sizes
+
+- **Small**: 30px
+- **Medium**: 40px (Default)
+- **Large**: 50px
+
+By following these UI/UX guidelines, we can ensure that our
