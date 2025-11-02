@@ -1,16 +1,15 @@
 # app/models.py
-
-from sqlalchemy import Column, Integer, String, Float, UUID, DateTime, ForeignKey, Text, Boolean, Numeric, PickleType, JSON, LargeBinary, SmallInteger, BigInteger, Binary, Date, Time, Interval, NullType
-from sqlalchemy.dialects.postgresql import JSONB, BYTEA
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, Float, DateTime, ForeignKey, Text, Integer, UUID, Boolean
+from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import JSONB
+from datetime import datetime
 import uuid
 
 Base = declarative_base()
 
 class Call(Base):
-    __tablename__ = 'calls'
-    
+    __tablename__ = "calls"
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     call_id = Column(String(255), unique=True, index=True)
     name = Column(String(500))
@@ -21,30 +20,29 @@ class Call(Base):
     funding_percentage = Column(Float)
     max_per_company = Column(Float)
     deadline = Column(DateTime(timezone=True))
-    processing_status = Column(String(50))
-    analysis_status = Column(String(50))
-    relevance_score = Column(Float)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    processing_status = Column(String(50), default="pending")
+    analysis_status = Column(String(50), default="pending")
+    relevance_score = Column(Float, default=0.0)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-class Task(Base):
-    __tablename__ = 'tasks'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    task_name = Column(String(255))
-    description = Column(Text)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+class Analysis(Base):
+    __tablename__ = "analyses"
 
-class CallTask(Base):
-    __tablename__ = 'call_tasks'
-    
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    call_id = Column(UUID(as_uuid=True), ForeignKey('calls.id'), index=True)
-    task_id = Column(UUID(as_uuid=True), ForeignKey('tasks.id'), index=True)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
-    
-    call = relationship("Call", backref=backref("call_tasks", lazy="dynamic"))
-    task = relationship("Task", backref=backref("call_tasks", lazy="dynamic"))
+    call_id = Column(String(255), ForeignKey("calls.call_id"))
+    analysis_result = Column(JSONB)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+class Notification(Base):
+    __tablename__ = "notifications"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    call_id = Column(String(255), ForeignKey("calls.call_id"))
+    sent_at = Column(DateTime(timezone=True), server_default=func.now())
+    is_sent = Column(Boolean, default=False)
+
+Call.analyses = relationship("Analysis", back_populates="call")
+Notification.call = relationship("Call", back_populates="notifications")
 
