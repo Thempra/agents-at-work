@@ -10,28 +10,37 @@ def get_tasks(db: Session, skip: int = 0, limit: int = 100):
 
 def create_task(db: Session, task: TaskCreate):
     db_task = Task(**task.dict())
-    db.add(db_task)
-    db.commit()
-    db.refresh(db_task)
-    return db_task
+    try:
+        db.add(db_task)
+        db.commit()
+        db.refresh(db_task)
+        return db_task
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 def update_task(db: Session, task_id: int, task: TaskUpdate):
     db_task = get_task(db, task_id)
     if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
     
-    for key, value in task.dict().items():
+    for key, value in task.dict(exclude_unset=True).items():
         setattr(db_task, key, value)
     
-    db.commit()
-    db.refresh(db_task)
-    return db_task
+    try:
+        db.commit()
+        db.refresh(db_task)
+        return db_task
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 def delete_task(db: Session, task_id: int):
     db_task = get_task(db, task_id)
     if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
     
-    db.delete(db_task)
-    db.commit()
-    return {"detail": "Task deleted"}
+    try:
+        db.delete(db_task)
+        db.commit()
+        return {"detail": "Task deleted"}
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=str(e))
