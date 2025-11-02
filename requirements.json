@@ -1,53 +1,57 @@
 {
   "project_name": "Call for Tenders",
   "main_features": [
-    {
-      "feature": "Web Scraping Engine",
-      "description": "Scrapes the index of EU tenders and extracts details, handling pagination and PDF validations."
-    },
-    {
-      "feature": "Database Management",
-      "description": "Manages a PostgreSQL database for storing tender data with fields like name, sector, description, etc."
-    },
-    {
-      "feature": "API Endpoints",
-      "description": "Provides RESTful API endpoints to interact with the scraped data through CRUD operations."
-    },
-    {
-      "feature": "Dashboard",
-      "description": "Displays a dashboard for monitoring system status, scraping statistics, and tender results."
-    }
+    "Web scraping of Call for Tenders data from the EU website",
+    "Database management and storage using PostgreSQL",
+    "REST API for accessing scraped data",
+    "Real-time monitoring dashboard with automated updates"
   ],
   "technical_stack": [
-    {
-      "technology": "FastAPI",
-      "version": "1.0.0",
-      "description": "Framework for building APIs with Python 3.7+ based on standard Python type hints."
-    },
-    {
-      "technology": "SQLAlchemy",
-      "version": "not specified",
-      "description": "Python SQL toolkit and Object-Relational Mapping (ORM) system."
-    },
-    {
-      "technology": "Scrapy",
-      "version": "not specified",
-      "description": "Framework for extracting data from websites using Python."
-    },
-    {
-      "technology": "PostgreSQL",
-      "version": "not specified",
-      "description": "Relational database management system."
-    }
+    "FastAPI",
+    "SQLAlchemy",
+    "Scrapy",
+    "Docker",
+    "PostgreSQL",
+    "Adminer",
+    "Swagger UI/ReDoc"
   ],
   "priority_order": [
-    "Web Scraping Engine",
-    "Database Management",
-    "API Endpoints",
-    "Dashboard"
+    {
+      "task": "Fix validation error in models.py",
+      "description": "Correct the NameError by importing Text from SQLAlchemy",
+      "priority": "High"
+    },
+    {
+      "task": "Implement web scraping functionality with Scrapy",
+      "description": "Develop a scraper for collecting Call for Tenders data from the EU website",
+      "priority": "Very High"
+    },
+    {
+      "task": "Create database schema and models",
+      "description": "Design and implement the SQLAlchemy models for storing scraped data",
+      "priority": "High"
+    },
+    {
+      "task": "Develop REST API endpoints",
+      "description": "Implement CRUD operations for managing tasks and convocatorias via a FastAPI endpoint",
+      "priority": "High"
+    },
+    {
+      "task": "Build real-time monitoring dashboard",
+      "description": "Create an interactive dashboard to display system status, scraping statistics, and results",
+      "priority": "Very High"
+    }
   ],
-  "corrective_actions": {
-    "error_description": "ImportError: cannot import name 'Task' from 'app.models'",
-    "action_taken": "Ensure that the 'Task' model is correctly defined in 'app/models.py' and that there are no typos."
-  }
+  "corrective_actions": [
+    {
+      "error": "Validation Error due to undefined Text in models.py",
+      "action": "Import 'Text' from SQLAlchemy ORM",
+      "solution": "Add `from sqlalchemy import Text` at the beginning of models.py"
+    },
+    {
+      "error": "Missing implementation for web scraping functionality",
+      "action": "Develop a Scrapy spider to scrape Call for Tenders data",
+      "solution": "Create a new Scrapy project and implement a spider to collect data from the EU website"
+    }
+  ]
 }
