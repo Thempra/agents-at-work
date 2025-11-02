@@ -1,25 +1,32 @@
 version: '3.8'
 
 services:
-  web:
-    build: .
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
     environment:
       - DATABASE_URL=sqlite:///./sql_app.db
     volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
+      - ./app:/app
     depends_on:
       - db
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
+      interval: 10s
+      timeout: 5s
       retries: 3
-      start_period: 40s
 
   db:
-    image: sqlite
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=sql_app
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./sql_app.db:/var/lib/sqlite/db.sqlite
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
