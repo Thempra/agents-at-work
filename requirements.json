@@ -2,45 +2,54 @@
   "project_name": "Call for Tenders",
   "main_features": [
     {
-      "feature": "Adminer Integration",
-      "description": "Adminer web tool for database management of the Call for Tenders PostgreSQL database."
-    },
-    {
       "feature": "Web Scraping Engine",
-      "description": "Scrapy-based engine for scraping convocatorias from EU's official portal and storing them in a database."
+      "description": "Scrapes convocatorias from the EU's funding opportunities portal and updates the database with new calls."
     },
     {
-      "feature": "Dashboard Monitoring",
-      "description": "User-friendly dashboard to monitor system status, scraping statistics, and convocation results with real-time updates."
+      "feature": "Admin Interface",
+      "description": "Provides a web-based interface to manage and monitor the system using Adminer."
+    },
+    {
+      "feature": "API Endpoints",
+      "description": "Exposes endpoints for managing tender calls via a REST API, including pagination and filtering."
+    },
+    {
+      "feature": "Dashboard",
+      "description": "Displays real-time status of the system, analytics on scraping results, and convocatoria recommendations."
     }
   ],
   "technical_stack": [
     {
       "technology": "FastAPI",
-      "description": "For building the REST API providing data access."
+      "description": "Framework for building APIs with Python."
     },
     {
       "technology": "SQLAlchemy",
-      "description": "ORM for database interactions and queries."
+      "description": "ORM (Object-Relational Mapping) to interact with the database."
     },
     {
       "technology": "Scrapy",
-      "description": "Framework for web scraping operations, with asynchronous downloads using aiohttp."
+      "description": "Framework used for web scraping tasks."
     },
     {
       "technology": "Adminer",
-      "description": "Web-based SQL administration tool accessible via a browser."
+      "description": "Web-based database management tool."
+    },
+    {
+      "technology": "PostgreSQL",
+      "description": "Database system for storing and retrieving data."
     }
   ],
   "priority_order": [
     "Web Scraping Engine",
     "API Endpoints",
-    "Dashboard Monitoring"
+    "Dashboard",
+    "Admin Interface"
   ],
   "corrective_actions": [
     {
-      "error": "ImportError: cannot import name 'router' from 'app.routers.tasks'",
-      "action": "Ensure that the file `app/routers/tasks.py` contains a definition for the 'router' object, or correct the import statement in `app/main.py` to match the actual object being imported."
+      "error": "NameError: name 'Task' is not defined",
+      "action": "Define the 'Task' model in the 'app/models.py' file or import it from an existing module where it's defined."
     }
   ]
 }
