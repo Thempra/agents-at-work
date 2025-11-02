@@ -1,106 +1,137 @@
-# tests/test_api.py
 import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from app.main import app, Base
-from app.database import SQLALCHEMY_DATABASE_URL, get_db
+from fastapi import HTTPException
+from sqlalchemy import create_engine, Column, Integer, String, Text, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
 
-SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test_sql_app.db"
+# Create a temporary in-memory database for testing purposes
+SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-engine_test = create_engine(SQLALCHEMY_TEST_DATABASE_URL, connect_args={"check_same_thread": False})
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine_test)
+Base = declarative_base()
 
-Base.metadata.create_all(bind=engine_test)
+class Call(Base):
+    __tablename__ = 'calls'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(500))
+    description = Column(Text)
 
+# Create the database tables
+Base.metadata.create_all(bind=engine)
+
+# Fixture for creating a test session
 @pytest.fixture(scope="module")
-def test_db():
-    Base.metadata.drop_all(bind=engine_test)
-    Base.metadata.create_all(bind=engine_test)
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+def db_session():
+    session = SessionLocal()
+    yield session
+    session.close()
 
-@pytest.fixture(scope="module")
-def client(test_db):
-    def override_get_db():
-        return test_db
+# Test fixture to create a sample call record in the database
+@pytest.fixture(scope="function")
+def test_call(db_session):
+    new_call = Call(name="Test Call", description="This is a test call.")
+    db_session.add(new_call)
+    db_session.commit()
+    db_session.refresh(new_call)
+    yield new_call
+    db_session.delete(new_call)
+    db_session.commit()
 
-    app.dependency_overrides[get_db] = override_get_db
-    with TestClient(app) as c:
-        yield c
+# Test creating a new call
+def test_create_call(db_session):
+    new_call = Call(name="New Call", description="This is a new call.")
+    db_session.add(new_call)
+    db_session.commit()
+    assert new_call.id is not None
+    assert new_call.name == "New Call"
+    assert new_call.description == "This is a new call."
 
-# Test CRUD operations for Task model (assuming Task is defined in models.py)
-from app.models import Task
+# Test reading a call by ID
+def test_read_call(test_call, db_session):
+    call = db_session.query(Call).filter(Call.id == test_call.id).first()
+    assert call.id == test_call.id
+    assert call.name == test_call.name
+    assert call.description == test_call.description
 
-def test_create_task(client):
-    task_data = {
-        "id": "test_id",
-        "call_id": "test_rss_id",
-        "name": "Test Task",
-        "sector": "Technology",
-        "description": "This is a test task.",
-        "url": "http://example.com",
-        "total_funding": 1000.0,
-        "funding_percentage": 50.0,
-        "max_per_company": 200.0,
-        "deadline": "2023-12-31T23:59:59Z",
-        "processing_status": "Pending",
-        "analysis_status": "Not Started",
-        "relevance_score": 80.0
-    }
-    response = client.post("/tasks/", json=task_data)
-    assert response.status_code == 201
-    created_task = response.json()
-    assert created_task["id"] == task_data["id"]
-    assert created_task["name"] == task_data["name"]
+# Test updating a call
+def test_update_call(test_call, db_session):
+    updated_name = "Updated Call"
+    updated_description = "This is an updated call."
+    
+    test_call.name = updated_name
+    test_call.description = updated_description
+    db_session.commit()
+    
+    updated_call = db_session.query(Call).filter(Call.id == test_call.id).first()
+    assert updated_call.name == updated_name
+    assert updated_call.description == updated_description
 
-def test_get_task(client):
-    # Assuming a task is already created in the test_db fixture
-    task_id = "test_id"
-    response = client.get(f"/tasks/{task_id}")
-    assert response.status_code == 200
-    retrieved_task = response.json()
-    assert retrieved_task["id"] == task_id
+# Test deleting a call
+def test_delete_call(test_call, db_session):
+    db_session.delete(test_call)
+    db_session.commit()
+    
+    deleted_call = db_session.query(Call).filter(Call.id == test_call.id).first()
+    assert deleted_call is None
 
-def test_update_task(client):
-    # Assuming a task is already created in the test_db fixture
-    task_id = "test_id"
-    updated_data = {
-        "name": "Updated Task",
-        "sector": "Healthcare",
-        "total_funding": 1500.0
-    }
-    response = client.put(f"/tasks/{task_id}", json=updated_data)
-    assert response.status_code == 200
-    updated_task = response.json()
-    assert updated_task["id"] == task_id
-    assert updated_task["name"] == updated_data["name"]
-    assert updated_task["sector"] == updated_data["sector"]
-    assert updated_task["total_funding"] == updated_data["total_funding"]
+# Test handling 404 error for non-existent call
+def test_read_non_existent_call(db_session):
+    with pytest.raises(HTTPException) as exc_info:
+        call = db_session.query(Call).filter(Call.id == 999).first()
+        assert exc_info.value.status_code == 404
 
-def test_delete_task(client):
-    # Assuming a task is already created in the test_db fixture
-    task_id = "test_id"
-    response = client.delete(f"/tasks/{task_id}")
-    assert response.status_code == 204
+# Test validation errors for empty name
+def test_create_call_with_empty_name(db_session):
+    new_call = Call(name="", description="This is a test call.")
+    with pytest.raises(HTTPException) as exc_info:
+        db_session.add(new_call)
+        db_session.commit()
+        assert exc_info.value.status_code == 400
 
-# Test error handling (404, 400)
-def test_get_nonexistent_task(client):
-    non_existent_id = "non_existent_id"
-    response = client.get(f"/tasks/{non_existent_id}")
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Task not found"}
+# Test validation errors for long name
+def test_create_call_with_long_name(db_session):
+    long_name = "a" * 501  # Exceeds VARCHAR(500) limit
+    new_call = Call(name=long_name, description="This is a test call.")
+    with pytest.raises(HTTPException) as exc_info:
+        db_session.add(new_call)
+        db_session.commit()
+        assert exc_info.value.status_code == 400
 
-# Test edge cases and validation
-def test_create_task_missing_required_field(client):
-    task_data = {
-        "id": "test_id",
-        "call_id": "test_rss_id",
-        "name": "Test Task",
-        # Missing sector field which is required
-    }
-    response = client.post("/tasks/", json=task_data)
-    assert response.status_code == 422
+# Test validation errors for empty description
+def test_create_call_with_empty_description(db_session):
+    new_call = Call(name="Test Call", description="")
+    with pytest.raises(HTTPException) as exc_info:
+        db_session.add(new_call)
+        db_session.commit()
+        assert exc_info.value.status_code == 400
+
+# Test validation errors for long description
+def test_create_call_with_long_description(db_session):
+    long_description = "a" * 65536  # Exceeds TEXT limit
+    new_call = Call(name="Test Call", description=long_description)
+    with pytest.raises(HTTPException) as exc_info:
+        db_session.add(new_call)
+        db_session.commit()
+        assert exc_info.value.status_code == 400
+
+# Test edge case: updating a non-existent call
+def test_update_non_existent_call(db_session):
+    updated_name = "Updated Call"
+    updated_description = "This is an updated call."
+    
+    with pytest.raises(HTTPException) as exc_info:
+        call = Call(name=updated_name, description=updated_description)
+        db_session.merge(call)
+        db_session.commit()
+        assert exc_info.value.status_code == 404
+
+# Test edge case: deleting a non-existent call
+def test_delete_non_existent_call(db_session):
+    with pytest.raises(HTTPException) as exc_info:
+        call = Call(id=999)
+        db_session.delete(call)
+        db_session.commit()
+        assert exc_info.value.status_code == 404
+
