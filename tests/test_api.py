@@ -1,69 +1,76 @@
-# tests/test_api.py
 import pytest
-from fastapi import status
 from fastapi.testclient import TestClient
-from sqlalchemy.orm import Session
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from app.main import app, get_db
-from app.models import Call
-from app.crud import create_call, read_calls
+from app.database import Base, engine
+from app.models import Task, Call
 
-@pytest.fixture(scope="module")
-def client():
-    with TestClient(app) as client:
-        yield client
+# Create an in-memory database for testing purposes
+SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
-@pytest.fixture(scope="module")
-def db():
-    engine = create_engine(SQLALCHEMY_DATABASE_URL)
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    db = SessionLocal()
-    Base.metadata.create_all(bind=engine)
-    yield db
-    Base.metadata.drop_all(bind=engine)
+engine_test = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal_test = sessionmaker(autocommit=False, autoflush=False, bind=engine_test)
 
-def test_create_call(client: TestClient, db: Session):
-    data = {
-        "call_id": "test-call-id",
-        "name": "Test Call",
-        "sector": "Technology",
-        "description": "This is a test call.",
-        "url": "http://example.com/test",
-        "total_funding": 1000.0,
-        "funding_percentage": 50.0,
-        "max_per_company": 200.0,
-        "deadline": "2023-12-31T23:59:59Z",
-        "processing_status": "Pending",
-        "analysis_status": "Not Started",
-        "relevance_score": 85.0
-    }
-    response = client.post("/tasks/calls", json=data)
-    assert response.status_code == status.HTTP_201_CREATED
-    call_id = response.json()["id"]
-    created_call = read_calls(db, call_id=call_id)
-    assert created_call.call_id == data["call_id"]
+Base.metadata.create_all(bind=engine_test)
 
-def test_read_calls(client: TestClient, db: Session):
-    create_call(db, Call(call_id="test-call-id", name="Test Call"))
-    response = client.get("/tasks/calls")
-    assert response.status_code == status.HTTP_200_OK
-    calls = response.json()
-    assert len(calls) == 1
-    assert calls[0]["name"] == "Test Call"
+app.dependency_overrides[get_db] = lambda: SessionLocal_test()
 
-def test_update_call(client: TestClient, db: Session):
-    call = create_call(db, Call(call_id="test-call-id", name="Old Name"))
-    data = {
-        "name": "Updated Name"
-    }
-    response = client.put(f"/tasks/calls/{call.id}", json=data)
-    assert response.status_code == status.HTTP_200_OK
-    updated_call = read_calls(db, call_id=call.call_id)
-    assert updated_call.name == data["name"]
+client = TestClient(app)
 
-def test_delete_call(client: TestClient, db: Session):
-    call = create_call(db, Call(call_id="test-call-id", name="Test Call"))
-    response = client.delete(f"/tasks/calls/{call.id}")
-    assert response.status_code == status.HTTP_204_NO_CONTENT
-    with pytest.raises(CallNotFound):
-        read_calls(db, call_id=call.call_id)
+
+def test_create_task():
+    response = client.post(
+        "/tasks/",
+        json={"name": "Test Task", "sector": "IT", "description": "A test task"},
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert "id" in data
+    assert data["name"] == "Test Task"
+    assert data["sector"] == "IT"
+    assert data["description"] == "A test task"
+
+
+def test_read_task():
+    # Create a task to read
+    client.post(
+        "/tasks/",
+        json={"name": "Read Task", "sector": "HR", "description": "A task to read"},
+    )
+    response = client.get("/tasks/")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["name"] == "Read Task"
+
+
+def test_update_task():
+    # Create a task to update
+    response = client.post(
+        "/tasks/",
+        json={"name": "Update Task", "sector": "Legal", "description": "A task to update"},
+    )
+    task_id = response.json()["id"]
+    updated_data = {"name": "Updated Name", "description": "Updated Description"}
+    response = client.put(f"/tasks/{task_id}", json=updated_data)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["name"] == "Updated Name"
+    assert data["description"] == "Updated Description"
+
+
+def test_delete_task():
+    # Create a task to delete
+    response = client.post(
+        "/tasks/",
+        json={"name": "Delete Task", "sector": "Marketing", "description": "A task to delete"},
+    )
+    task_id = response.json()["id"]
+    response = client.delete(f"/tasks/{task_id}")
+    assert response.status_code == 204
+
+
+def test_read_nonexistent_task():
+    response = client.get("/tasks/999")
+    assert response.status_code == 404
