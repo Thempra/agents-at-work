@@ -1,83 +1,102 @@
-# tests/test_api.py
 import pytest
-from fastapi.testclient import TestClient
-from app.main import app
-from app.database import Base, engine, get_db
-from sqlalchemy.orm import sessionmaker
-
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test_sql_app.db"
-
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
-
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-def override_get_db():
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
-
-app.dependency_overrides[get_db] = override_get_db
-
-client = TestClient(app)
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
+from app.database import engine, Base, get_db
+from app.models import Call
+from app.crud import create_call, read_call, update_call, delete_call
 
 @pytest.fixture(scope="module")
-def setup_database():
+def test_db():
     Base.metadata.create_all(bind=engine)
-    yield
+    yield engine
     Base.metadata.drop_all(bind=engine)
 
-# CRUD Operations for Task Model
+def test_create_call(test_db):
+    session = Session(bind=test_db)
+    call_data = {
+        "call_id": "test123",
+        "name": "Test Call",
+        "sector": "Technology",
+        "description": "This is a test call for technology projects.",
+        "url": "http://example.com/test-call",
+        "total_funding": 50000.0,
+        "funding_percentage": 20.0,
+        "max_per_company": 10000.0,
+        "deadline": "2024-12-31T23:59:59Z",
+        "processing_status": "Pending",
+        "analysis_status": "Not Started",
+        "relevance_score": 85.0
+    }
+    call = create_call(session, call_data)
+    assert call.call_id == call_data["call_id"]
+    assert call.name == call_data["name"]
+    session.close()
 
-def test_create_task(setup_database):
-    response = client.post("/tasks/", json={"name": "Test Task", "description": "This is a test task.", "status": "pending", "due_date": "2023-12-31T23:59:59"})
-    assert response.status_code == 201
-    data = response.json()
-    assert data["name"] == "Test Task"
-    assert data["description"] == "This is a test task."
-    assert data["status"] == "pending"
+def test_read_call(test_db):
+    session = Session(bind=test_db)
+    call_data = {
+        "call_id": "test123",
+        "name": "Test Call",
+        "sector": "Technology",
+        "description": "This is a test call for technology projects.",
+        "url": "http://example.com/test-call",
+        "total_funding": 50000.0,
+        "funding_percentage": 20.0,
+        "max_per_company": 10000.0,
+        "deadline": "2024-12-31T23:59:59Z",
+        "processing_status": "Pending",
+        "analysis_status": "Not Started",
+        "relevance_score": 85.0
+    }
+    call = create_call(session, call_data)
+    read_call_result = read_call(session, call.id)
+    assert read_call_result.call_id == call_data["call_id"]
+    assert read_call_result.name == call_data["name"]
+    session.close()
 
-def test_get_task(setup_database):
-    response = client.post("/tasks/", json={"name": "Test Task", "description": "This is a test task.", "status": "pending", "due_date": "2023-12-31T23:59:59"})
-    assert response.status_code == 201
-    data = response.json()
-    response = client.get(f"/tasks/{data['id']}")
-    assert response.status_code == 200
-    task_data = response.json()
-    assert task_data["name"] == "Test Task"
+def test_update_call(test_db):
+    session = Session(bind=test_db)
+    call_data = {
+        "call_id": "test123",
+        "name": "Test Call",
+        "sector": "Technology",
+        "description": "This is a test call for technology projects.",
+        "url": "http://example.com/test-call",
+        "total_funding": 50000.0,
+        "funding_percentage": 20.0,
+        "max_per_company": 10000.0,
+        "deadline": "2024-12-31T23:59:59Z",
+        "processing_status": "Pending",
+        "analysis_status": "Not Started",
+        "relevance_score": 85.0
+    }
+    call = create_call(session, call_data)
+    update_data = {
+        "name": "Updated Test Call"
+    }
+    updated_call = update_call(session, call.id, update_data)
+    assert updated_call.name == update_data["name"]
+    session.close()
 
-def test_update_task(setup_database):
-    response = client.post("/tasks/", json={"name": "Test Task", "description": "This is a test task.", "status": "pending", "due_date": "2023-12-31T23:59:59"})
-    assert response.status_code == 201
-    data = response.json()
-    updated_data = {"name": "Updated Task", "description": "This task has been updated.", "status": "completed"}
-    response = client.put(f"/tasks/{data['id']}", json=updated_data)
-    assert response.status_code == 200
-    task_data = response.json()
-    assert task_data["name"] == "Updated Task"
-
-def test_delete_task(setup_database):
-    response = client.post("/tasks/", json={"name": "Test Task", "description": "This is a test task.", "status": "pending", "due_date": "2023-12-31T23:59:59"})
-    assert response.status_code == 201
-    data = response.json()
-    response = client.delete(f"/tasks/{data['id']}")
-    assert response.status_code == 204
-
-# Authentication (Placeholder, to be implemented)
-
-def test_authenticate_user(setup_database):
-    # This will be implemented based on the actual authentication mechanism
-    pass
-
-# Error Handling and Edge Cases
-
-def test_read_task_not_found(setup_database):
-    response = client.get("/tasks/1")
-    assert response.status_code == 404
-
-def test_create_task_with_invalid_data(setup_database):
-    response = client.post("/tasks/", json={"name": "Test Task"})
-    assert response.status_code == 422
+def test_delete_call(test_db):
+    session = Session(bind=test_db)
+    call_data = {
+        "call_id": "test123",
+        "name": "Test Call",
+        "sector": "Technology",
+        "description": "This is a test call for technology projects.",
+        "url": "http://example.com/test-call",
+        "total_funding": 50000.0,
+        "funding_percentage": 20.0,
+        "max_per_company": 10000.0,
+        "deadline": "2024-12-31T23:59:59Z",
+        "processing_status": "Pending",
+        "analysis_status": "Not Started",
+        "relevance_score": 85.0
+    }
+    call = create_call(session, call_data)
+    delete_call(session, call.id)
+    with pytest.raises(HTTPException) as e:
+        read_call(session, call.id)
+    assert e.value.status_code == 404
+    session.close()
