@@ -1,57 +1,36 @@
 {
   "project_name": "Call for Tenders",
   "main_features": [
-    "Web scraping of Call for Tenders data from the EU website",
-    "Database management and storage using PostgreSQL",
-    "REST API for accessing scraped data",
-    "Real-time monitoring dashboard with automated updates"
+    {
+      "name": "Web Scraping Engine",
+      "description": "Scrapes convocatorias de la UE, extracts data, and updates the database."
+    },
+    {
+      "name": "Dashboard",
+      "description": "Monitors system status, displays statistics, shows results of convocation analysis, and provides direct links to recommended tenders."
+    }
   ],
   "technical_stack": [
     "FastAPI",
-    "SQLAlchemy",
-    "Scrapy",
-    "Docker",
+    "Scrapy (without Selenium)",
     "PostgreSQL",
-    "Adminer",
-    "Swagger UI/ReDoc"
+    "SQLAlchemy",
+    "Docker Compose"
   ],
   "priority_order": [
     {
-      "task": "Fix validation error in models.py",
-      "description": "Correct the NameError by importing Text from SQLAlchemy",
+      "feature": "Web Scraping Engine",
       "priority": "High"
     },
     {
-      "task": "Implement web scraping functionality with Scrapy",
-      "description": "Develop a scraper for collecting Call for Tenders data from the EU website",
-      "priority": "Very High"
-    },
-    {
-      "task": "Create database schema and models",
-      "description": "Design and implement the SQLAlchemy models for storing scraped data",
-      "priority": "High"
-    },
-    {
-      "task": "Develop REST API endpoints",
-      "description": "Implement CRUD operations for managing tasks and convocatorias via a FastAPI endpoint",
-      "priority": "High"
-    },
-    {
-      "task": "Build real-time monitoring dashboard",
-      "description": "Create an interactive dashboard to display system status, scraping statistics, and results",
-      "priority": "Very High"
+      "feature": "Dashboard",
+      "priority": "Medium"
     }
   ],
   "corrective_actions": [
     {
-      "error": "Validation Error due to undefined Text in models.py",
-      "action": "Import 'Text' from SQLAlchemy ORM",
-      "solution": "Add `from sqlalchemy import Text` at the beginning of models.py"
-    },
-    {
-      "error": "Missing implementation for web scraping functionality",
-      "action": "Develop a Scrapy spider to scrape Call for Tenders data",
-      "solution": "Create a new Scrapy project and implement a spider to collect data from the EU website"
+      "error": "IndentationError",
+      "solution": "Ensure all code blocks within functions are indented properly."
     }
   ]
 }
