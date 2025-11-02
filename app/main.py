@@ -7,18 +7,17 @@ from sqlalchemy.orm import Session
 from app.database import engine, SessionLocal, get_db
 from app.routers.tasks import router as tasks_router
 from app.models import Call
-from app.schemas import CallCreate, CallUpdate
 
 app = FastAPI(
     title="Call for Tenders API",
-    description="An API to manage and analyze EU tender calls.",
+    description="FastAPI application for managing Call for Tenders data",
     version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
 )
 
-origins = [
-    "http://localhost",
-    "http://localhost:3000",
-]
+# CORS configuration
+origins = ["*"]  # Permissive for development, use specific origins in production
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,18 +27,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Database initialization
+Base.metadata.create_all(bind=engine)
+
+# Include routers
+app.include_router(tasks_router)
+
+@app.get("/")
+async def read_root():
+    return {"message": "Welcome to the Call for Tenders API"}
+
 @app.on_event("startup")
 async def startup():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # Perform any database setup or migration here if needed
+    pass
 
 @app.on_event("shutdown")
 async def shutdown():
-    pass
-
-app.include_router(tasks_router, prefix="/tasks", tags=["Tasks"])
+    # Close database connection and perform cleanup if necessary
+    SessionLocal.close()
 
 # Health check endpoint
-@app.get("/health", status_code=status.HTTP_200_OK)
-def health_check():
-    return {"message": "I'm healthy!"}
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
