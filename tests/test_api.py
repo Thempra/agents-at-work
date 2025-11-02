@@ -1,76 +1,106 @@
+# tests/test_api.py
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.main import app, get_db
-from app.database import Base, engine
-from app.models import Task, Call
+from app.main import app, Base
+from app.database import SQLALCHEMY_DATABASE_URL, get_db
 
-# Create an in-memory database for testing purposes
-SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test_sql_app.db"
 
-engine_test = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal_test = sessionmaker(autocommit=False, autoflush=False, bind=engine_test)
+engine_test = create_engine(SQLALCHEMY_TEST_DATABASE_URL, connect_args={"check_same_thread": False})
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine_test)
 
 Base.metadata.create_all(bind=engine_test)
 
-app.dependency_overrides[get_db] = lambda: SessionLocal_test()
+@pytest.fixture(scope="module")
+def test_db():
+    Base.metadata.drop_all(bind=engine_test)
+    Base.metadata.create_all(bind=engine_test)
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-client = TestClient(app)
+@pytest.fixture(scope="module")
+def client(test_db):
+    def override_get_db():
+        return test_db
 
+    app.dependency_overrides[get_db] = override_get_db
+    with TestClient(app) as c:
+        yield c
 
-def test_create_task():
-    response = client.post(
-        "/tasks/",
-        json={"name": "Test Task", "sector": "IT", "description": "A test task"},
-    )
+# Test CRUD operations for Task model (assuming Task is defined in models.py)
+from app.models import Task
+
+def test_create_task(client):
+    task_data = {
+        "id": "test_id",
+        "call_id": "test_rss_id",
+        "name": "Test Task",
+        "sector": "Technology",
+        "description": "This is a test task.",
+        "url": "http://example.com",
+        "total_funding": 1000.0,
+        "funding_percentage": 50.0,
+        "max_per_company": 200.0,
+        "deadline": "2023-12-31T23:59:59Z",
+        "processing_status": "Pending",
+        "analysis_status": "Not Started",
+        "relevance_score": 80.0
+    }
+    response = client.post("/tasks/", json=task_data)
     assert response.status_code == 201
-    data = response.json()
-    assert "id" in data
-    assert data["name"] == "Test Task"
-    assert data["sector"] == "IT"
-    assert data["description"] == "A test task"
+    created_task = response.json()
+    assert created_task["id"] == task_data["id"]
+    assert created_task["name"] == task_data["name"]
 
-
-def test_read_task():
-    # Create a task to read
-    client.post(
-        "/tasks/",
-        json={"name": "Read Task", "sector": "HR", "description": "A task to read"},
-    )
-    response = client.get("/tasks/")
+def test_get_task(client):
+    # Assuming a task is already created in the test_db fixture
+    task_id = "test_id"
+    response = client.get(f"/tasks/{task_id}")
     assert response.status_code == 200
-    data = response.json()
-    assert len(data) == 1
-    assert data[0]["name"] == "Read Task"
+    retrieved_task = response.json()
+    assert retrieved_task["id"] == task_id
 
-
-def test_update_task():
-    # Create a task to update
-    response = client.post(
-        "/tasks/",
-        json={"name": "Update Task", "sector": "Legal", "description": "A task to update"},
-    )
-    task_id = response.json()["id"]
-    updated_data = {"name": "Updated Name", "description": "Updated Description"}
+def test_update_task(client):
+    # Assuming a task is already created in the test_db fixture
+    task_id = "test_id"
+    updated_data = {
+        "name": "Updated Task",
+        "sector": "Healthcare",
+        "total_funding": 1500.0
+    }
     response = client.put(f"/tasks/{task_id}", json=updated_data)
     assert response.status_code == 200
-    data = response.json()
-    assert data["name"] == "Updated Name"
-    assert data["description"] == "Updated Description"
+    updated_task = response.json()
+    assert updated_task["id"] == task_id
+    assert updated_task["name"] == updated_data["name"]
+    assert updated_task["sector"] == updated_data["sector"]
+    assert updated_task["total_funding"] == updated_data["total_funding"]
 
-
-def test_delete_task():
-    # Create a task to delete
-    response = client.post(
-        "/tasks/",
-        json={"name": "Delete Task", "sector": "Marketing", "description": "A task to delete"},
-    )
-    task_id = response.json()["id"]
+def test_delete_task(client):
+    # Assuming a task is already created in the test_db fixture
+    task_id = "test_id"
     response = client.delete(f"/tasks/{task_id}")
     assert response.status_code == 204
 
-
-def test_read_nonexistent_task():
-    response = client.get("/tasks/999")
+# Test error handling (404, 400)
+def test_get_nonexistent_task(client):
+    non_existent_id = "non_existent_id"
+    response = client.get(f"/tasks/{non_existent_id}")
     assert response.status_code == 404
+    assert response.json() == {"detail": "Task not found"}
+
+# Test edge cases and validation
+def test_create_task_missing_required_field(client):
+    task_data = {
+        "id": "test_id",
+        "call_id": "test_rss_id",
+        "name": "Test Task",
+        # Missing sector field which is required
+    }
+    response = client.post("/tasks/", json=task_data)
+    assert response.status_code == 422
