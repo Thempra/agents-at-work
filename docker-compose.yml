@@ -1,15 +1,13 @@
 version: '3.8'
 
 services:
-  web:
+  fastapi:
     build: .
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     volumes:
       - .:/app
     ports:
       - "8000:8000"
-    environment:
-      - DATABASE_URL=sqlite:///./sql_app.db
     depends_on:
       - db
     healthcheck:
@@ -19,20 +17,16 @@ services:
       retries: 3
 
   db:
-    image: postgres:13
+    image: postgres:latest
     environment:
-      - POSTGRES_DB=fastapi_db
-      - POSTGRES_USER=fastapi_user
-      - POSTGRES_PASSWORD=fastapi_password
+      POSTGRES_DB: sql_app
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U fastapi_user"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
 volumes:
-  db_data:
+  db-data:
+
