@@ -1,64 +1,37 @@
+# app/routers/tasks.py
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.models import Call, Task
-from datetime import datetime
-from typing import List, Optional
 
-def get_call(db: Session, call_id: str):
-    return db.query(Call).filter(Call.call_id == call_id).first()
+router = APIRouter()
 
-def get_calls(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Call).offset(skip).limit(limit).all()
+@router.post("/tasks/", response_model=Task, status_code=status.HTTP_201_CREATED)
+def create_task(task: TaskCreate, db: Session = Depends(get_db)):
+    """
+    Create a new task.
+    """
+    # Implement the logic to create and return the task
+    pass
 
-def create_call(db: Session, call: Call):
-    db.add(call)
-    db.commit()
-    db.refresh(call)
-    return call
+@router.get("/tasks/{task_id}", response_model=Task, status_code=status.HTTP_200_OK)
+def read_task(task_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve a single task.
+    """
+    # Implement the logic to retrieve and return the task
+    pass
 
-def update_call(db: Session, call_id: str, call_data: dict):
-    call = get_call(db, call_id=call_id)
-    if not call:
-        raise HTTPException(status_code=404, detail="Call not found")
-    
-    for key, value in call_data.items():
-        setattr(call, key, value)
-    db.commit()
-    return call
+@router.put("/tasks/{task_id}", response_model=Task, status_code=status.HTTP_200_OK)
+def update_task(task_id: int, task_update: TaskUpdate, db: Session = Depends(get_db)):
+    """
+    Update an existing task.
+    """
+    # Implement the logic to update and return the task
+    pass
 
-def delete_call(db: Session, call_id: str):
-    call = get_call(db, call_id=call_id)
-    if not call:
-        raise HTTPException(status_code=404, detail="Call not found")
-    
-    db.delete(call)
-    db.commit()
-
-def create_task(db: Session, task: Task):
-    db.add(task)
-    db.commit()
-    db.refresh(task)
-    return task
-
-def get_task(db: Session, task_id: int):
-    return db.query(Task).filter(Task.id == task_id).first()
-
-def get_tasks(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Task).offset(skip).limit(limit).all()
-
-def update_task(db: Session, task_id: int, task_data: dict):
-    task = get_task(db, task_id=task_id)
-    if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
-    
-    for key, value in task_data.items():
-        setattr(task, key, value)
-    db.commit()
-    return task
-
-def delete_task(db: Session, task_id: int):
-    task = get_task(db, task_id=task_id)
-    if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
-    
-    db.delete(task)
-    db.commit()
+@router.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(task_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a task.
+    """
+    # Implement the logic to delete the task
+    pass
