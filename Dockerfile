@@ -1,3 +1,4 @@
+Dockerfile
 # Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
@@ -11,25 +12,22 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run app.py when the container launches
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
-# Create a non-root user and switch to it
-RUN useradd -m myuser && chown -R myuser:myuser /app
+# Add user and non-root permissions
+RUN useradd --create-home myuser && chown -R myuser /app
 USER myuser
 
-# Expose the port that FastAPI is running on
-EXPOSE 80
+# Expose the port that your app runs on
+EXPOSE 8000
 
-# Set environment variables for security best practices
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONHASHSEED=random
-
-# Use a multi-stage build to reduce the size of the final image
-FROM python:3.9-slim as builder
-WORKDIR /app
-COPY requirements.txt /app/
+# Use multi-stage build to reduce image size
+FROM python:3.9-slim AS builder
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 FROM builder
-USER myuser
 COPY . /app
+USER myuser
+WORKDIR /app
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
