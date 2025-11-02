@@ -1,87 +1,98 @@
-# Style Guide
+# Style Guide for Project App
 
-## Overview
-
-This document outlines the design principles, UI elements, and user experience guidelines for our application. Our goal is to create an intuitive, visually appealing, and easy-to-use interface that provides a seamless experience for users.
+## Introduction
+This document outlines the design principles, style guidelines, and components to be used in our project application (App). Adhering to these guidelines will ensure a cohesive, user-friendly, and consistent experience across all parts of the application.
 
 ## Color Scheme
+The primary color palette should provide a balance between professionalism and approachability. The following colors have been selected:
 
-### Primary Colors
-- **Primary Blue**: `#007bff`
-  - Used for primary actions, buttons, and links.
-- **Secondary Gray**: `#6c757d`
-  - Used for labels, borders, and less critical elements.
-
-### Accent Colors
-- **Success Green**: `#28a745`
-- **Danger Red**: `#dc3545`
-
-### Neutral Colors
-- **Background White**: `#ffffff`
-- **Text Dark Gray**: `#343a40`
-- **Text Light Gray**: `#6c757d`
+- **Primary:** #007BFF (Blue) - This is used for primary actions, links, and call-to-action buttons.
+- **Secondary:** #6C757D (Gray) - Used for less important text, borders, and background elements.
+- **Success:** #28A745 (Green) - Indicates a successful action or completion.
+- **Danger:** #DC3545 (Red) - Used for warning or error messages.
+- **Warning:** #FFC107 (Yellow) - Indicating caution or important information.
 
 ## Typography
+We will use Google Fonts to ensure consistency and readability across all platforms. The primary font is "Roboto", a versatile, sans-serif font suitable for both body text and headings.
 
-- **Primary Font**: Open Sans, sans-serif
-  - Used for all text within the application.
-- **Heading Size**: 24px (Open Sans Bold)
-- **Body Text Size**: 14px (Open Sans Regular)
+### Headings
+Headings should be used hierarchically from H1 to H6. For example:
+- **H1:** Main title of the page (e.g., "Project Dashboard")
+- **H2:** Subsection titles (e.g., "Overview", "Tasks")
+- **H3:** Smaller subsections or groups within a section
+- **H4:** Subheadings within smaller sections
+
+### Body Text
+Body text should be in Roboto with a font size of 16px. Paragraphs should have a line height of 1.5.
+
+### Code Snippets
+Code snippets should be formatted using a monospace font like "Courier New" or "Consolas", with a font size slightly smaller than the body text to ensure readability.
 
 ## Component Styles
 
 ### Buttons
-- **Primary Button**:
-  - Background: `#007bff`
-  - Text Color: `#ffffff`
-  - Border: None
-  - Hover State: 
-    - Background: `#0056b3`
+- **Primary Button:** Use primary color (#007BFF). Text color: white.
+- **Secondary Button:** Use secondary color (#6C757D). Text color: white.
+- **Success Button:** Use success color (#28A745). Text color: white.
+- **Danger Button:** Use danger color (#DC3545). Text color: white.
 
-- **Secondary Button**:
-  - Background: `#6c757d`
-  - Text Color: `#ffffff`
-  - Border: None
-  - Hover State: 
-    - Background: `#5a6268`
+Buttons should have padding of 10px 20px and rounded corners with a radius of 4px.
 
-### Links
-- **Primary Link**:
-  - Color: `#007bff`
-  - Underline on hover
+### Input Fields
+Input fields should use the primary color as their border. When focused, the border should change to secondary color. Placeholder text should be in gray (#6C757D).
 
-- **Secondary Link**:
-  - Color: `#6c757d`
-  - Underline on hover
+### Text Areas
+Text areas should have similar styling to input fields but with a larger height and more padding for better usability.
 
-### Inputs
-- **Text Input**:
-  - Background: `#ffffff`
-  - Border: `1px solid #ced4da`
-  - Padding: 8px
+### Cards
+Cards are used to group related content together. They should have a light gray background (#F8F9FA) and rounded corners with a radius of 4px. Cards should also include drop shadows for depth.
 
-- **Input Focus**:
-  - Border: `1px solid #007bff`
+## Layouts
 
-## Layout and Spacing
+### Dashboard
+The dashboard is the main page where users will spend most of their time. It should feature:
 
-- **Container Width**: 
-  - Small Screens: 95%
-  - Medium Screens: 80%
-  - Large Screens: 60%
+- A header with the project name and user profile.
+- Navigation sidebar on the left with links to different sections (e.g., Tasks, Calls).
+- A main content area on the right that updates based on the selected section.
 
-- **Padding**:
-  - Standard Padding: 16px
-  - Large Padding: 32px
+### Task List
+The task list should display all tasks in a table format. Each row should include:
 
-- **Spacing Between Elements**:
-  - Small Gap: 8px
-  - Medium Gap: 16px
-  - Large Gap: 32px
+- **Task Name:** The name of the task.
+- **Description:** A brief description of what needs to be done.
+- **Status:** Current status of the task (e.g., "Pending", "Completed").
+- **Action Buttons:** Options to edit, delete, or assign a task.
+
+### Call Details
+The call details page should display information about a specific call. It may include:
+
+- **Call ID:** Unique identifier for the call.
+- **Name:** Name of the call.
+- **Sector:** Sector associated with the call.
+- **Description:** Full description of the call.
+- **Funding Information:** Total funding, funding percentage, and other relevant financial data.
+- **Deadline:** Deadline for completing the call.
+- **Status:** Current processing and analysis status.
+- **Relevance Score:** A score indicating how relevant the call is.
+
+## Navigation
+
+### Header
+The header should be fixed at the top of the page and include:
+
+- The project name.
+- User profile (name, avatar).
+- Navigation links to different sections of the dashboard.
+
+### Sidebar
+The sidebar should be fixed on the left side of the page and include:
+
+- Links to different sections (e.g., Tasks, Calls).
 
 ## Icons
 
-- Use icons from a consistent icon library, such as Font Awesome.
-- Ensure that icons are scalable and maintain their quality at various sizes.
+Icons will be used sparingly to enhance the visual appeal without overwhelming users. Common icons may include:
 
-By adhering to these guidelines, we can ensure that our application has a cohesive design and provides a positive user experience.
+- **Add Icon:** For creating new items.
+- **Edit Icon:**
