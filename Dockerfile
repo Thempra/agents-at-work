@@ -1,3 +1,4 @@
+Dockerfile
 # Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
@@ -8,15 +9,11 @@ WORKDIR /app
 COPY . /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Ensure Python app is non-root and not writable by others
-RUN adduser --disabled-password --non-unique myuser && \
-    chown -R myuser:myuser /app && \
-    chmod -R 755 /app
-
-# Change to the non-root user
-USER myuser
+# Create a non-root user and switch to it
+RUN useradd -m appuser && chown -R appuser:appuser /app
+USER appuser
 
 # Make port 80 available to the world outside this container
 EXPOSE 80
