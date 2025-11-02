@@ -1,55 +1,44 @@
-# app/crud.py
-
 from sqlalchemy.orm import Session
 from typing import Optional
-from app.models import Call
-from app.schemas import CallCreate, CallUpdate
+from app.models import Task
+from app.schemas import TaskCreate, TaskUpdate
 
-def get_call(db: Session, call_id: str):
-    return db.query(Call).filter(Call.call_id == call_id).first()
+def get_task(db: Session, task_id: int):
+    return db.query(Task).filter(Task.id == task_id).first()
 
-def get_calls(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Call).offset(skip).limit(limit).all()
+def get_tasks(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Task).offset(skip).limit(limit).all()
 
-def create_call(db: Session, call: CallCreate):
-    fake_hashed_password = call.url + "notreallyhashed"
-    db_call = Call(
-        call_id=call.call_id,
-        name=call.name,
-        sector=call.sector,
-        description=call.description,
-        url=call.url,
-        total_funding=call.total_funding,
-        funding_percentage=call.funding_percentage,
-        max_per_company=call.max_per_company,
-        deadline=call.deadline,
-        processing_status="pending",
-        analysis_status="pending",
-        relevance_score=0.0
+def create_task(db: Session, task: TaskCreate):
+    fake_hashed_password = task.description + "notreallyhashed"
+    db_task = Task(
+        name=task.name,
+        description=task.description,
+        status=task.status,
+        due_date=task.due_date
     )
-    db.add(db_call)
+    db.add(db_task)
     db.commit()
-    db.refresh(db_call)
-    return db_call
+    db.refresh(db_task)
+    return db_task
 
-def update_call(db: Session, call_id: str, call_update: CallUpdate):
-    call = get_call(db, call_id)
-    if not call:
-        raise HTTPException(status_code=404, detail="Call not found")
+def update_task(db: Session, task_id: int, task: TaskUpdate):
+    db_task = get_task(db, task_id)
+    if not db_task:
+        raise HTTPException(status_code=404, detail="Task not found")
     
-    update_data = call_update.dict(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(call, key, value)
+    for field, value in task.dict(exclude_unset=True).items():
+        setattr(db_task, field, value)
     
     db.commit()
-    db.refresh(call)
-    return call
+    db.refresh(db_task)
+    return db_task
 
-def delete_call(db: Session, call_id: str):
-    call = get_call(db, call_id)
-    if not call:
-        raise HTTPException(status_code=404, detail="Call not found")
+def delete_task(db: Session, task_id: int):
+    db_task = get_task(db, task_id)
+    if not db_task:
+        raise HTTPException(status_code=404, detail="Task not found")
     
-    db.delete(call)
+    db.delete(db_task)
     db.commit()
-    return call
+    return {"detail": "Task deleted"}
