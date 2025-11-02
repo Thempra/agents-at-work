@@ -2,35 +2,45 @@
   "project_name": "Call for Tenders",
   "main_features": [
     {
-      "feature_name": "Web Scraping Engine",
-      "description": "Automated scraping of EU call for tenders from the official website, including pagination and data extraction."
+      "name": "Web Scraping Engine",
+      "description": "Scrapes the index of EU funding opportunities and extracts details from individual pages."
     },
     {
-      "feature_name": "Database Management",
-      "description": "Management of PostgreSQL database using SQLAlchemy ORM, ensuring efficient storage and retrieval of call data."
+      "name": "Database Management",
+      "description": "Manages a PostgreSQL database with a 'calls' table for storing convocatoria data."
     },
     {
-      "feature_name": "Dashboard Interface",
-      "description": "A responsive dashboard for monitoring system status, scraping statistics, and convocatoria results with real-time updates."
+      "name": "Dashboard",
+      "description": "Provides a web interface to monitor the status of the system, scraping statistics, and analysis results."
     }
   ],
   "technical_stack": [
-    "FastAPI (for API development)",
-    "Scrapy (for web scraping)",
-    "PostgreSQL (database management)",
-    "SQLAlchemy ORM (for database interactions)",
-    "aiohttp (for asynchronous HTTP requests in scraping)",
-    "BeautifulSoup (for HTML parsing)"
+    {
+      "name": "Framework",
+      "value": "FastAPI"
+    },
+    {
+      "name": "Database",
+      "value": "PostgreSQL"
+    },
+    {
+      "name": "Web Scraping",
+      "value": "Scrapy"
+    },
+    {
+      "name": "ORM",
+      "value": "SQLAlchemy"
+    }
   ],
   "priority_order": [
-    "Web Scraping Engine",
     "Database Management",
-    "Dashboard Interface"
+    "Web Scraping Engine",
+    "Dashboard"
   ],
   "corrective_actions": [
     {
-      "issue": "Validation Error due to undefined 'TEXT'",
-      "solution": "Import the 'TEXT' type from SQLAlchemy in the models.py file."
+      "error": "Validation Error: NameError: name 'get_db' is not defined",
+      "action": "Ensure that the `get_db` function is properly imported or defined in the file where it is needed."
     }
   ]
 }
