@@ -1,111 +1,65 @@
 # Style Guide
 
 ## Overview
-
-This document outlines the UI/UX guidelines for our application. The aim is to provide a cohesive look and feel that reflects professionalism, usability, and accessibility while maintaining a modern aesthetic.
+This style guide provides the guidelines for creating a consistent and user-friendly interface for our application. These guidelines aim to ensure that all components are visually appealing, easy to understand, and consistent across the application.
 
 ## Color Scheme
 
 ### Primary Colors
-
-1. **Primary 1**: #007bff (A shade of blue)
-   - Used for primary actions, links, and accents.
-2. **Primary 2**: #6c757d (Light grey)
-   - Used for secondary text and border colors.
-
-### Secondary Colors
-
-1. **Secondary 1**: #ff6347 (Tomato red)
-   - Used for alerts, warnings, or error messages.
-2. **Secondary 2**: #98a0aa (Slate grey)
-   - Used for background colors or less critical text.
+- **Primary**: #123456 - A neutral color that serves as the base for the application.
+- **Secondary**: #6789AB - A slightly darker shade used for buttons and other interactive elements.
+- **Accent**: #CDEF00 - A vibrant color used to highlight important actions or draw attention.
 
 ### Neutral Colors
+- **Background**: #FFFFFF - White, used as the background for most parts of the application.
+- **Text**: #333333 - Dark gray, used for primary text.
+- **Light Text**: #666666 - Lighter gray, used for secondary text and less important elements.
 
-1. **White**: #ffffff
-   - Used for backgrounds and light elements.
-2. **Black**: #000000
-   - Used for text and dark elements.
-3. **Grey**: #5c6270 (Medium grey)
-   - Used for less critical background or dividers.
+### Error Colors
+- **Error**: #FF0000 - Red, used to indicate errors or issues.
+- **Warning**: #FFFF00 - Yellow, used to indicate warnings.
 
 ## Typography
 
-### Font Families
-
-1. **Sans-Serif**: Arial, Helvetica Neue, Helvetica, sans-serif
-   - Default font for all UI elements.
+### Font Family
+- **Primary**: Arial, sans-serif - Used for all main text and headings.
 
 ### Font Sizes
-
-1. **Heading 1 (H1)**: 24px
-   - Used for main section headings.
-2. **Heading 2 (H2)**: 20px
-   - Used for subsection headings.
-3. **Heading 3 (H3)**: 18px
-   - Used for sub-subsection headings.
-4. **Body Text**: 16px
-   - Default font size for all body text.
-5. **Small Text**: 14px
-   - Used for captions, small labels, or less critical text.
+- **Heading 1 (H1)**: 24px
+- **Heading 2 (H2)**: 20px
+- **Heading 3 (H3)**: 18px
+- **Body Text**: 16px
 
 ### Line Height
-
-- The default line height should be set to 1.5 (1.5 times the font size) for readability.
+- **Line Height**: 1.5 - Ensures readability and legibility.
 
 ## Component Styles
 
 ### Buttons
+- **Primary Button**: Solid background with primary color, white text.
+- **Secondary Button**: Outline with secondary color, primary text.
+- **Accent Button**: Solid background with accent color, white text.
 
-1. **Primary Button**:
-   - Background: Primary 1
-   - Text Color: White
-   - Border: None
-   - Hover State: Lighten Primary 1 by 10%
-2. **Secondary Button**:
-   - Background: Secondary 1
-   - Text Color: White
-   - Border: None
-   - Hover State: Darken Secondary 1 by 10%
+### Forms
+- **Input Fields**: White background with a light gray border.
+- **Labels**: Dark text above input fields.
+- **Error Messages**: Red text below input fields or in a separate error section.
 
-### Inputs
+### Navigation
+- **Main Menu**: Fixed at the top of the page, dark gray background with white text.
+- **Submenu**: Dropdown menu items with primary color background and white text.
 
-1. **Text Input**:
-   - Background: White
-   - Border: 1px solid Primary 2
-   - Padding: 8px
-   - Placeholder Text Color: Grey
-2. **Label**:
-   - Font Size: Small Text (14px)
-   - Margin Bottom: 4px
+## Layout
 
-### Tables
+### Grid System
+- **Grid Rows**: Each row has 12 columns to ensure consistent spacing and alignment across components.
 
-1. **Table Header**:
-   - Background: Primary 2
-   - Text Color: White
-   - Border: 1px solid Secondary 2
-2. **Table Row (Odd)**:
-   - Background: Grey
-3. **Table Row (Even)**:
-   - Background: White
-4. **Table Cell**:
-   - Padding: 8px
+### Padding and Margin
+- **Padding**: Consistent padding of 16px for all elements.
+- **Margin**: Minimal margin used between sections and elements.
 
-### Alerts
+## Responsive Design
+- The application should be responsive, ensuring that it looks good on both desktop and mobile devices.
+- Use media queries to adjust layout and style based on screen size.
 
-1. **Success Alert**:
-   - Background: Lighten Secondary 1 by 20%
-   - Text Color: Black
-2. **Error Alert**:
-   - Background: Darken Secondary 1 by 20%
-   - Text Color: White
-
-## Accessibility
-
-- Ensure all interactive elements (buttons, links) are keyboard accessible.
-- Use sufficient contrast ratios for text and background colors.
-- Provide alternative text for images.
-- Ensure forms are easily navigable using tab.
-
-This style guide should be adhered to consistently across the application to maintain a high standard of UI/UX.
+By following these guidelines, we can create a user-friendly and visually appealing interface that is consistent across the entire application.
