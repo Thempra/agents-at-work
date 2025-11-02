@@ -1,121 +1,129 @@
-# Style Guide for the Task Management Application
+# App Style Guide
 
 ## Introduction
 
-This style guide provides a comprehensive set of guidelines for designing and implementing the user interface (UI) and user experience (UX) elements of the task management application. The goal is to ensure a consistent, intuitive, and visually appealing user interface that enhances productivity and usability.
+The style guide for this application aims to ensure a cohesive, user-friendly design that enhances usability and readability. It outlines the color scheme, typography, and component styles that should be used throughout the app.
+
+---
 
 ## Color Scheme
 
-### Palette
-- **Primary Blue:** #1E90FF
-  - Used for primary actions, such as creating tasks or updating their status.
-- **Secondary Gray:** #808080
-  - Used for background elements, minor text, and inactive states.
-- **Accent Green:** #32CD32
-  - Used for positive notifications and completed tasks.
-- **Error Red:** #FF0000
-  - Used for error messages and critical alerts.
+### Primary Colors
+- **Primary**: #007bff (Aqua Blue)
+  - Used for primary actions like buttons and links.
+  
+- **Secondary**: #6c757d (Gray)
+  - Used for secondary actions and less critical elements.
 
-### Usage Guidelines
-- **Primary Blue:** Emphasize key actions and call-to-action elements.
-- **Secondary Gray:** Use as a neutral background color or for minor text to avoid visual clutter.
-- **Accent Green:** Indicate success, completion, or positive outcomes.
-- **Error Red:** Highlight errors, issues, or critical notifications.
+### Neutral Colors
+- **Background**: #f8f9fa (Light Gray)
+  - Used as the background color for most surfaces.
+  
+- **Text**: #343a40 (Dark Gray)
+  - Used for primary text to ensure readability.
+
+### Accent Colors
+- **Accent**: #28a745 (Green)
+  - Used to highlight success or positive actions.
+
+---
 
 ## Typography
 
-### Fonts
-- **Primary Font:** Open Sans (Sans-serif)
-  - Used throughout the application for headings and body text.
-- **Secondary Font:** Roboto (Sans-serif)
-  - Used for smaller text elements, such as captions or footnotes.
+### Font Family
+- **Primary Font**: Open Sans, sans-serif
+  - Used throughout the application for all text elements except headings.
+  
+- **Heading Fonts**: Montserrat, sans-serif
+  - Used for headlines and titles.
 
-### Sizes
-- **Headings:**
-  - H1: 36px
-  - H2: 28px
-  - H3: 24px
-  - H4: 20px
-  - H5: 18px
-  - H6: 16px
-- **Body Text:** 16px
+### Font Sizes
+- **Small Text (12px)**: For captions and small descriptive text.
+- **Body Text (14px)**: Default font size for paragraphs and general body content.
+- **Headings**:
+  - **H1**: 32px
+  - **H2**: 28px
+  - **H3**: 24px
+  - **H4**: 20px
+  - **H5**: 16px
+  - **H6**: 14px
 
-### Usage Guidelines
-- **Headings:** Use headings to organize content and guide users through the application.
-- **Body Text:** Use body text for main content, descriptions, and instructions.
+### Line Height and Letter Spacing
+- **Line Height**: 1.5 (1.5em)
+- **Letter Spacing**: 0.03em for normal text; 0.02em for headings
+
+---
 
 ## Component Styles
 
 ### Buttons
-- **Primary Button:**
-  - Background Color: Primary Blue
-  - Border: None
+- **Primary Button**:
+  - Background: #007bff
   - Text Color: White
-  - Padding: 10px 20px
-  - Font Size: 16px
-- **Secondary Button:**
-  - Background Color: Transparent
-  - Border: 1px solid Secondary Gray
-  - Text Color: Secondary Gray
-  - Padding: 5px 10px
+  - Hover/Active State: Darken the color slightly
+  
+- **Secondary Button**:
+  - Background: #6c757d
+  - Text Color: White
+  - Hover/Active State: Darken the color slightly
+
+### Forms
+- **Input Fields**:
+  - Background: White
+  - Border: 1px solid #ced4da
+  - Placeholder Text: #999
+  
+- **Form Labels**:
+  - Color: #343a40
   - Font Size: 14px
 
-### Inputs
-- **Text Input:**
-  - Background Color: White
-  - Border: 1px solid Secondary Gray
-  - Text Color: Black
-  - Padding: 8px 12px
-  - Font Size: 16px
-- **Textarea:**
-  - Same as text input but with a larger height.
+### Alerts and Notifications
+- **Success Alert**:
+  - Background: #d4edda
+  - Border: 1px solid #c3e6cb
+  - Text Color: #155724
+  
+- **Error Alert**:
+  - Background: #f8d7da
+  - Border: 1px solid #f5c6cb
+  - Text Color: #721c24
 
-### Cards
-- **Card Background:** White
-- **Card Border:** 1px solid Secondary Gray
-- **Padding:** 15px
-
-### Alerts
-- **Success Alert:**
-  - Background Color: Accent Green
-  - Text Color: White
-  - Padding: 10px
-- **Error Alert:**
-  - Background Color: Error Red
-  - Text Color: White
-  - Padding: 10px
+---
 
 ## Layout and Spacing
 
 ### Grid System
-- Use a responsive grid system to ensure consistent spacing and alignment across different devices.
+- The application uses a flexible grid system based on Bootstrap's responsive grid system for consistent spacing and alignment.
 
-### Margins and Paddings
-- **Margin:** Use margins to create space between elements.
-- **Padding:** Use padding within elements to separate content from the edges.
+### Padding and Margin
+- Padding is used to create space inside elements, while margin is used to separate elements.
+- Padding units: 0.25rem (4px), 0.5rem (8px), 1rem (16px), 1.5rem (24px), 3rem (48px), 4rem (64px), 5rem (80px)
+
+---
+
+## Icons
+
+- Icons are used to enhance the user interface and provide visual cues.
+- A consistent icon set should be used throughout the application.
+
+### Icon Libraries
+- **FontAwesome**: Used for most icons due to its extensive library and ease of use.
+
+---
 
 ## Accessibility
 
-### Color Contrast
-- Ensure sufficient color contrast for readability. The WCAG 2.1 guidelines recommend a minimum contrast ratio of 4.5:1 for normal text and 3:1 for larger text.
+- The application adheres to WCAG 2.1 guidelines to ensure accessibility.
+- All interactive elements are keyboard accessible.
+- Contrast ratios meet the AA standard (4.5:1).
 
-### Keyboard Navigation
-- Ensure that all interactive elements can be accessed using keyboard navigation.
-
-### Screen Reader Compatibility
-- Use semantic HTML and ARIA attributes to improve accessibility for screen readers.
+---
 
 ## Responsive Design
 
-### Breakpoints
-- Define breakpoints for different device sizes:
-  - Mobile (small): <600px
-  - Tablet (medium): >=601px and <900px
-  - Desktop (large): >=901px
+- The application is designed to be responsive, adapting to various screen sizes and devices.
+- Media queries are used to apply specific styles for different breakpoints.
 
-### Media Queries
-- Use media queries to apply styles specific to each breakpoint.
+---
 
-## Conclusion
-
-By following these style guidelines, we can create a cohesive and user-friendly interface that enhances the overall experience of using our task management application. Consistency in design elements will help users quickly navigate and interact with the application, improving productivity and satisfaction.
+This style guide provides a comprehensive overview of the design elements that should be used in the application to ensure consistency, readability, and user satisfaction.
