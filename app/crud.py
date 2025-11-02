@@ -1,6 +1,7 @@
+# app/crud.py
 from sqlalchemy.orm import Session
 from typing import Optional
-from app.models import Task
+from app.models import Task, Call
 from app.schemas import TaskCreate, TaskUpdate
 
 def get_task(db: Session, task_id: int):
@@ -41,4 +42,4 @@ def delete_task(db: Session, task_id: int):
     
     db.delete(db_task)
     db.commit()
-    return {"detail": "Task deleted"}
+    return db_task
