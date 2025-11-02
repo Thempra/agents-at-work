@@ -2,46 +2,35 @@
   "project_name": "Call for Tenders",
   "main_features": [
     {
-      "feature_name": "Adminer Access",
-      "description": "Provides a web-based interface to manage the PostgreSQL database used by Call for Tenders."
-    },
-    {
       "feature_name": "Web Scraping Engine",
-      "description": "Automatically scrapes convocatoria data from the EU's funding portal and stores it in a database."
+      "description": "Automated scraping of EU call for tenders from the official website, including pagination and data extraction."
     },
     {
-      "feature_name": "Dashboard",
-      "description": "Displays real-time system status, scraping statistics, and analysis results with pagination capabilities."
+      "feature_name": "Database Management",
+      "description": "Management of PostgreSQL database using SQLAlchemy ORM, ensuring efficient storage and retrieval of call data."
+    },
+    {
+      "feature_name": "Dashboard Interface",
+      "description": "A responsive dashboard for monitoring system status, scraping statistics, and convocatoria results with real-time updates."
     }
   ],
   "technical_stack": [
-    {
-      "technology_name": "FastAPI",
-      "version": "1.0.0",
-      "description": "Framework for building APIs."
-    },
-    {
-      "technology_name": "Scrapy",
-      "description": "Library for web scraping and data extraction."
-    },
-    {
-      "technology_name": "SQLAlchemy",
-      "description": "ORM for Python, providing a full suite of well-known enterprise-level persistence patterns."
-    },
-    {
-      "technology_name": "Docker",
-      "description": "Containerization platform to package applications and their dependencies."
-    }
+    "FastAPI (for API development)",
+    "Scrapy (for web scraping)",
+    "PostgreSQL (database management)",
+    "SQLAlchemy ORM (for database interactions)",
+    "aiohttp (for asynchronous HTTP requests in scraping)",
+    "BeautifulSoup (for HTML parsing)"
   ],
   "priority_order": [
-    "Adminer Access",
     "Web Scraping Engine",
-    "Dashboard"
+    "Database Management",
+    "Dashboard Interface"
   ],
   "corrective_actions": [
     {
-      "issue": "Validation Error: NameError: name 'Base' is not defined.",
-      "action": "Ensure that the `Base` variable is properly imported from `app.models` where it is defined."
+      "issue": "Validation Error due to undefined 'TEXT'",
+      "solution": "Import the 'TEXT' type from SQLAlchemy in the models.py file."
     }
   ]
 }
