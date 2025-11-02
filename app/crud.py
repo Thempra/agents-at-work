@@ -1,7 +1,7 @@
 # app/crud.py
 
 from sqlalchemy.orm import Session
-from app.models import Call
+from app.models import Call, Task
 from datetime import datetime
 from typing import List, Optional
 
@@ -34,4 +34,35 @@ def delete_call(db: Session, call_id: str):
     
     db.delete(call)
     db.commit()
-    return {"message": "Call deleted"}
+
+# Task CRUD operations
+def get_task(db: Session, task_id: int):
+    return db.query(Task).filter(Task.id == task_id).first()
+
+def get_tasks(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Task).offset(skip).limit(limit).all()
+
+def create_task(db: Session, task: Task):
+    db.add(task)
+    db.commit()
+    db.refresh(task)
+    return task
+
+def update_task(db: Session, task_id: int, task_data: dict):
+    task = get_task(db, task_id=task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    for key, value in task_data.items():
+        setattr(task, key, value)
+    db.commit()
+    return task
+
+def delete_task(db: Session, task_id: int):
+    task = get_task(db, task_id=task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    db.delete(task)
+    db.commit()
+
