@@ -1,98 +1,121 @@
-# Style Guide for Project App
+# Style Guide for the Task Management Application
 
 ## Introduction
-This document outlines the design principles, style guidelines, and components to be used in our project application (App). Adhering to these guidelines will ensure a cohesive, user-friendly, and consistent experience across all parts of the application.
+
+This style guide provides a comprehensive set of guidelines for designing and implementing the user interface (UI) and user experience (UX) elements of the task management application. The goal is to ensure a consistent, intuitive, and visually appealing user interface that enhances productivity and usability.
 
 ## Color Scheme
-The primary color palette should provide a balance between professionalism and approachability. The following colors have been selected:
 
-- **Primary:** #007BFF (Blue) - This is used for primary actions, links, and call-to-action buttons.
-- **Secondary:** #6C757D (Gray) - Used for less important text, borders, and background elements.
-- **Success:** #28A745 (Green) - Indicates a successful action or completion.
-- **Danger:** #DC3545 (Red) - Used for warning or error messages.
-- **Warning:** #FFC107 (Yellow) - Indicating caution or important information.
+### Palette
+- **Primary Blue:** #1E90FF
+  - Used for primary actions, such as creating tasks or updating their status.
+- **Secondary Gray:** #808080
+  - Used for background elements, minor text, and inactive states.
+- **Accent Green:** #32CD32
+  - Used for positive notifications and completed tasks.
+- **Error Red:** #FF0000
+  - Used for error messages and critical alerts.
+
+### Usage Guidelines
+- **Primary Blue:** Emphasize key actions and call-to-action elements.
+- **Secondary Gray:** Use as a neutral background color or for minor text to avoid visual clutter.
+- **Accent Green:** Indicate success, completion, or positive outcomes.
+- **Error Red:** Highlight errors, issues, or critical notifications.
 
 ## Typography
-We will use Google Fonts to ensure consistency and readability across all platforms. The primary font is "Roboto", a versatile, sans-serif font suitable for both body text and headings.
 
-### Headings
-Headings should be used hierarchically from H1 to H6. For example:
-- **H1:** Main title of the page (e.g., "Project Dashboard")
-- **H2:** Subsection titles (e.g., "Overview", "Tasks")
-- **H3:** Smaller subsections or groups within a section
-- **H4:** Subheadings within smaller sections
+### Fonts
+- **Primary Font:** Open Sans (Sans-serif)
+  - Used throughout the application for headings and body text.
+- **Secondary Font:** Roboto (Sans-serif)
+  - Used for smaller text elements, such as captions or footnotes.
 
-### Body Text
-Body text should be in Roboto with a font size of 16px. Paragraphs should have a line height of 1.5.
+### Sizes
+- **Headings:**
+  - H1: 36px
+  - H2: 28px
+  - H3: 24px
+  - H4: 20px
+  - H5: 18px
+  - H6: 16px
+- **Body Text:** 16px
 
-### Code Snippets
-Code snippets should be formatted using a monospace font like "Courier New" or "Consolas", with a font size slightly smaller than the body text to ensure readability.
+### Usage Guidelines
+- **Headings:** Use headings to organize content and guide users through the application.
+- **Body Text:** Use body text for main content, descriptions, and instructions.
 
 ## Component Styles
 
 ### Buttons
-- **Primary Button:** Use primary color (#007BFF). Text color: white.
-- **Secondary Button:** Use secondary color (#6C757D). Text color: white.
-- **Success Button:** Use success color (#28A745). Text color: white.
-- **Danger Button:** Use danger color (#DC3545). Text color: white.
+- **Primary Button:**
+  - Background Color: Primary Blue
+  - Border: None
+  - Text Color: White
+  - Padding: 10px 20px
+  - Font Size: 16px
+- **Secondary Button:**
+  - Background Color: Transparent
+  - Border: 1px solid Secondary Gray
+  - Text Color: Secondary Gray
+  - Padding: 5px 10px
+  - Font Size: 14px
 
-Buttons should have padding of 10px 20px and rounded corners with a radius of 4px.
-
-### Input Fields
-Input fields should use the primary color as their border. When focused, the border should change to secondary color. Placeholder text should be in gray (#6C757D).
-
-### Text Areas
-Text areas should have similar styling to input fields but with a larger height and more padding for better usability.
+### Inputs
+- **Text Input:**
+  - Background Color: White
+  - Border: 1px solid Secondary Gray
+  - Text Color: Black
+  - Padding: 8px 12px
+  - Font Size: 16px
+- **Textarea:**
+  - Same as text input but with a larger height.
 
 ### Cards
-Cards are used to group related content together. They should have a light gray background (#F8F9FA) and rounded corners with a radius of 4px. Cards should also include drop shadows for depth.
+- **Card Background:** White
+- **Card Border:** 1px solid Secondary Gray
+- **Padding:** 15px
 
-## Layouts
+### Alerts
+- **Success Alert:**
+  - Background Color: Accent Green
+  - Text Color: White
+  - Padding: 10px
+- **Error Alert:**
+  - Background Color: Error Red
+  - Text Color: White
+  - Padding: 10px
 
-### Dashboard
-The dashboard is the main page where users will spend most of their time. It should feature:
+## Layout and Spacing
 
-- A header with the project name and user profile.
-- Navigation sidebar on the left with links to different sections (e.g., Tasks, Calls).
-- A main content area on the right that updates based on the selected section.
+### Grid System
+- Use a responsive grid system to ensure consistent spacing and alignment across different devices.
 
-### Task List
-The task list should display all tasks in a table format. Each row should include:
+### Margins and Paddings
+- **Margin:** Use margins to create space between elements.
+- **Padding:** Use padding within elements to separate content from the edges.
 
-- **Task Name:** The name of the task.
-- **Description:** A brief description of what needs to be done.
-- **Status:** Current status of the task (e.g., "Pending", "Completed").
-- **Action Buttons:** Options to edit, delete, or assign a task.
+## Accessibility
 
-### Call Details
-The call details page should display information about a specific call. It may include:
+### Color Contrast
+- Ensure sufficient color contrast for readability. The WCAG 2.1 guidelines recommend a minimum contrast ratio of 4.5:1 for normal text and 3:1 for larger text.
 
-- **Call ID:** Unique identifier for the call.
-- **Name:** Name of the call.
-- **Sector:** Sector associated with the call.
-- **Description:** Full description of the call.
-- **Funding Information:** Total funding, funding percentage, and other relevant financial data.
-- **Deadline:** Deadline for completing the call.
-- **Status:** Current processing and analysis status.
-- **Relevance Score:** A score indicating how relevant the call is.
+### Keyboard Navigation
+- Ensure that all interactive elements can be accessed using keyboard navigation.
 
-## Navigation
+### Screen Reader Compatibility
+- Use semantic HTML and ARIA attributes to improve accessibility for screen readers.
 
-### Header
-The header should be fixed at the top of the page and include:
+## Responsive Design
 
-- The project name.
-- User profile (name, avatar).
-- Navigation links to different sections of the dashboard.
+### Breakpoints
+- Define breakpoints for different device sizes:
+  - Mobile (small): <600px
+  - Tablet (medium): >=601px and <900px
+  - Desktop (large): >=901px
 
-### Sidebar
-The sidebar should be fixed on the left side of the page and include:
+### Media Queries
+- Use media queries to apply styles specific to each breakpoint.
 
-- Links to different sections (e.g., Tasks, Calls).
+## Conclusion
 
-## Icons
-
-Icons will be used sparingly to enhance the visual appeal without overwhelming users. Common icons may include:
-
-- **Add Icon:** For creating new items.
-- **Edit Icon:**
+By following these style guidelines, we can create a cohesive and user-friendly interface that enhances the overall experience of using our task management application. Consistency in design elements will help users quickly navigate and interact with the application, improving productivity and satisfaction.
