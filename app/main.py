@@ -8,39 +8,34 @@ from app.routers import tasks
 
 app = FastAPI(
     title="Call for Tenders",
+    description="API para el monitoreo y análisis de convocatorias de la Unión Europea",
     version="1.0.0",
-    description="API for monitoring and analyzing Call for Tenders from the European Union."
+    contact={
+        "name": "Tu Nombre",
+        "url": "https://github.com/tu-usuario/call-for-tenders"
+    },
+    license_info={
+        "name": "MIT License",
+        "url": "https://opensource.org/licenses/MIT"
+    }
 )
-
-# CORS configuration
-origins = [
-    "http://localhost",
-    "http://localhost:8000",
-    "http://localhost:3000",
-]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
-
-# Database initialization
-Base.metadata.create_all(bind=engine)
 
 @app.on_event("startup")
 async def startup():
-    pass  # Placeholder for database startup logic
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 @app.on_event("shutdown")
 async def shutdown():
-    pass  # Placeholder for database shutdown logic
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
 
-@app.get("/")
-async def read_root():
-    return {"message": "Welcome to the Call for Tenders API"}
-
-# Include routers
 app.include_router(tasks.router)
