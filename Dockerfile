@@ -1,4 +1,3 @@
-Dockerfile
 # Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
@@ -6,24 +5,25 @@ FROM python:3.9-slim
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Create the app directory
+# Create the working directory in the container
 WORKDIR /app
 
-# Copy the dependencies file to the working directory
-COPY requirements.txt .
+# Copy the current directory contents into the container at /app
+COPY . /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Copy the content of the local src directory to the working directory
-COPY . .
-
-# Ensure non-root user for security
-RUN useradd -ms /bin/bash appuser && chown -R appuser:appuser /app
-
-# Switch to non-root user
+# Ensure the app runs as a non-root user
+RUN useradd -m appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Expose port 8000 and run uvicorn when the container launches
-EXPOSE 8000
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Define environment variable
+ENV NAME World
+
+# Run app.py when the container launches
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
