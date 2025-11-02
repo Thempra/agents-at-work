@@ -1,66 +1,45 @@
-from sqlalchemy import Column, Integer, String, Text, Float, UUID, ForeignKey, TIMESTAMP, Boolean
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.sql.expression import text
-from sqlalchemy.orm import relationship
-from datetime import datetime
+# app/models.py
 
-UUID_VERSION = "4"
+from sqlalchemy import Column, Integer, String, Text, Float, UUID, TIMESTAMP, ForeignKey
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.dialects.postgresql import JSONB
+from datetime import datetime
+from uuid import uuid4
+from app.database import Base
 
 class Call(Base):
     __tablename__ = "calls"
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("uuid_generate_v4()"))
-    call_id = Column(String(255), unique=True)
-    name = Column(String(500))
+
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
+    call_id = Column(String(255), unique=True, index=True)
+    name = Column(String(500), nullable=False)
     sector = Column(String(200))
-    description = Column(Text)
-    url = Column(String(1000))
-    total_funding = Column(Float)
-    funding_percentage = Column(Float)
-    max_per_company = Column(Float)
-    deadline = Column(TIMESTAMP(timezone=True))
-    processing_status = Column(String(50))
-    analysis_status = Column(String(50))
-    relevance_score = Column(Float)
+    description = Column(Text, nullable=False)
+    url = Column(String(1000), nullable=False)
+    total_funding = Column(Float, nullable=False)
+    funding_percentage = Column(Float, nullable=False)
+    max_per_company = Column(Float, nullable=False)
+    deadline = Column(TIMESTAMP(timezone=True), nullable=False)
+    processing_status = Column(String(50), nullable=False)
+    analysis_status = Column(String(50), nullable=False)
+    relevance_score = Column(Float, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
+    updated_at = Column(TIMESTAMP(timezone=True), onupdate=func.now())
+
+    # Relationships
+    tasks = relationship("Task", back_populates="call")
 
 class Task(Base):
     __tablename__ = "tasks"
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("uuid_generate_v4()"))
-    name = Column(String(255), index=True)
-    description = Column(Text)
-    status = Column(String(50))
-    due_date = Column(TIMESTAMP(timezone=True))
-    created_at = Column(TIMESTAMP, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP, onupdate=datetime.utcnow)
 
-class CallTasks(Base):
-    __tablename__ = "call_tasks"
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("uuid_generate_v4()"))
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
+    task_type = Column(String(50), nullable=False)
+    status = Column(String(50), nullable=False)
+    data = Column(JSONB)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
+    updated_at = Column(TIMESTAMP(timezone=True), onupdate=func.now())
+
     call_id = Column(UUID(as_uuid=True), ForeignKey("calls.id"), index=True)
-    task_id = Column(UUID(as_uuid=True), ForeignKey("tasks.id"), index=True)
-    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    call = relationship("Call", back_populates="tasks")
 
-class User(Base):
-    __tablename__ = "users"
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("uuid_generate_v4()"))
-    username = Column(String(255), unique=True)
-    email = Column(String(255), unique=True)
-    hashed_password = Column(String(255))
-    is_active = Column(Boolean, default=True)
-
-class Role(Base):
-    __tablename__ = "roles"
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("uuid_generate_v4()"))
-    name = Column(String(255), unique=True)
-    description = Column(Text)
-
-class UserRole(Base):
-    __tablename__ = "user_roles"
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("uuid_generate_v4()"))
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), index=True)
-    role_id = Column(UUID(as_uuid=True), ForeignKey("roles.id"), index=True)
+# Additional models can be added here based on the requirements
