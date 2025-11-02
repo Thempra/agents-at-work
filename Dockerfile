@@ -1,21 +1,16 @@
 # Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Create the working directory in the container
+# Set the working directory in the container
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
 COPY . /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Ensure the app runs as a non-root user
+# Create a non-root user and switch to it
 RUN useradd -m appuser && chown -R appuser:appuser /app
 USER appuser
 
